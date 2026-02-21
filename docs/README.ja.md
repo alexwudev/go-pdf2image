@@ -126,27 +126,44 @@ Done! 10 files in 5.2s → ./images
 
 <h3 id="必要なもの">必要なもの <a href="#目次">⬆</a></h3>
 
+**共通（両プラットフォーム共通）：**
+
 - [Go](https://go.dev/) 1.24+
-- [Node.js](https://nodejs.org/)
-- [go-winres](https://github.com/tc-hib/go-winres)（Windows ビルドのみ、アプリアイコン埋め込み用）：`go install github.com/tc-hib/go-winres@latest`
-- **Linux ビルド**にはさらに：`sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
+- [Node.js](https://nodejs.org/)（フロントエンドのビルドに使用）
+
+**Windows ビルド（WSL クロスコンパイル）：**
+
+```bash
+# go-winres：アプリアイコン埋め込み用
+go install github.com/tc-hib/go-winres@latest
+```
+
+**Linux ビルド（ネイティブ）：**
+
+```bash
+# Ubuntu/Debian
+sudo apt install gcc pkg-config libgtk-3-dev libwebkit2gtk-4.0-dev
+```
 
 <h3 id="wslからwindowsへクロスコンパイル">WSL（Windows へクロスコンパイル） <a href="#目次">⬆</a></h3>
 
 ```bash
 ./build.sh            # または：./build.sh windows
+# 出力：platform/windows/pdf2image.exe
 ```
 
 <h3 id="linuxネイティブ">Linux（ネイティブ） <a href="#目次">⬆</a></h3>
 
 ```bash
 ./build.sh linux
+# 出力：platform/linux/pdf2image
 ```
 
 <h3 id="windowsネイティブ">Windows（ネイティブ） <a href="#目次">⬆</a></h3>
 
 ```batch
 build.bat
+REM 出力：platform\windows\pdf2image.exe
 ```
 
 <h3 id="開発モード">開発モード <a href="#目次">⬆</a></h3>

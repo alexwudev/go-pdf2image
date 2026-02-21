@@ -126,27 +126,44 @@ Done! 10 files in 5.2s → ./images
 
 <h3 id="requirements">Requirements <a href="#table-of-contents">⬆</a></h3>
 
+**Common (both platforms):**
+
 - [Go](https://go.dev/) 1.24+
-- [Node.js](https://nodejs.org/)
-- [go-winres](https://github.com/tc-hib/go-winres) (Windows builds only, for embedding the app icon): `go install github.com/tc-hib/go-winres@latest`
-- **Linux builds** also require: `sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
+- [Node.js](https://nodejs.org/) (for building the frontend)
+
+**Windows build (WSL cross-compile):**
+
+```bash
+# go-winres for embedding the app icon
+go install github.com/tc-hib/go-winres@latest
+```
+
+**Linux build (native):**
+
+```bash
+# Ubuntu/Debian
+sudo apt install gcc pkg-config libgtk-3-dev libwebkit2gtk-4.0-dev
+```
 
 <h3 id="wsl-cross-compile-to-windows">WSL (cross-compile to Windows) <a href="#table-of-contents">⬆</a></h3>
 
 ```bash
 ./build.sh            # or: ./build.sh windows
+# Output: platform/windows/pdf2image.exe
 ```
 
 <h3 id="linux-native">Linux (native) <a href="#table-of-contents">⬆</a></h3>
 
 ```bash
 ./build.sh linux
+# Output: platform/linux/pdf2image
 ```
 
 <h3 id="windows-native">Windows (native) <a href="#table-of-contents">⬆</a></h3>
 
 ```batch
 build.bat
+REM Output: platform\windows\pdf2image.exe
 ```
 
 <h3 id="development-mode">Development Mode <a href="#table-of-contents">⬆</a></h3>

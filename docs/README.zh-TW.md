@@ -126,27 +126,44 @@ Done! 10 files in 5.2s → ./images
 
 <h3 id="需求">需求 <a href="#目錄">⬆</a></h3>
 
+**共通（兩個平台都需要）：**
+
 - [Go](https://go.dev/) 1.24+
-- [Node.js](https://nodejs.org/)
-- [go-winres](https://github.com/tc-hib/go-winres)（僅 Windows 建置，嵌入應用程式圖示用）：`go install github.com/tc-hib/go-winres@latest`
-- **Linux 建置**另需：`sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
+- [Node.js](https://nodejs.org/)（建置前端用）
+
+**Windows 建置（WSL 交叉編譯）：**
+
+```bash
+# go-winres 用於嵌入應用程式圖示
+go install github.com/tc-hib/go-winres@latest
+```
+
+**Linux 建置（原生編譯）：**
+
+```bash
+# Ubuntu/Debian
+sudo apt install gcc pkg-config libgtk-3-dev libwebkit2gtk-4.0-dev
+```
 
 <h3 id="wsl交叉編譯為-windows">WSL（交叉編譯為 Windows） <a href="#目錄">⬆</a></h3>
 
 ```bash
 ./build.sh            # 或：./build.sh windows
+# 產出：platform/windows/pdf2image.exe
 ```
 
 <h3 id="linux原生編譯">Linux（原生編譯） <a href="#目錄">⬆</a></h3>
 
 ```bash
 ./build.sh linux
+# 產出：platform/linux/pdf2image
 ```
 
 <h3 id="windows原生編譯">Windows（原生編譯） <a href="#目錄">⬆</a></h3>
 
 ```batch
 build.bat
+REM 產出：platform\windows\pdf2image.exe
 ```
 
 <h3 id="開發模式">開發模式 <a href="#目錄">⬆</a></h3>
