@@ -59,9 +59,13 @@ if [ "$TARGET" = "windows" ]; then
 
     if [ $? -eq 0 ]; then
         rm -f rsrc_windows_*.syso
+        # 確保 libmupdf.dll 在 exe 旁邊
+        if [ -f platform/windows/libmupdf.dll ] && [ ! -f libmupdf.dll ]; then
+            cp platform/windows/libmupdf.dll .
+        fi
         echo ""
         echo "建置完成！"
-        ls -lh pdf2image.exe
+        ls -lh pdf2image.exe libmupdf.dll
     else
         echo "建置失敗！"
         exit 1

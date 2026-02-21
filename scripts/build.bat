@@ -18,6 +18,9 @@ echo === Building pdf2image.exe ===
 go build -tags desktop,production -ldflags "-s -w -H windowsgui" -o pdf2image.exe .
 if %errorlevel% equ 0 (
     del /q rsrc_windows_*.syso >nul 2>nul
+    if not exist libmupdf.dll (
+        if exist platform\windows\libmupdf.dll copy /y platform\windows\libmupdf.dll . >nul
+    )
     echo Build OK! -^> pdf2image.exe
 ) else (
     echo Build FAILED!
