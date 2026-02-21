@@ -1,0 +1,152 @@
+# PDF2Image
+
+<p align="center">
+  <img src="../build/appicon.png" alt="PDF2Image" width="128">
+</p>
+
+<p align="center">
+  <a href="../README.md">English</a> | 繁體中文 | <a href="README.zh-CN.md">简体中文</a> | <a href="README.ja.md">日本語</a>
+</p>
+
+一款 Windows 桌面應用程式，用於將 PDF 頁面轉換為高品質圖片。使用 [Wails](https://wails.io/)（Go 後端 + Vue 3 前端）開發，透過 [MuPDF](https://mupdf.com/) 進行快速、精確的 PDF 渲染。
+
+<h2 id="目錄">目錄</h2>
+
+- [功能](#功能)
+- [快速開始](#快速開始)
+- [使用方式](#使用方式)
+- [前置需求](#前置需求)
+- [從原始碼建置](#從原始碼建置)
+- [專案結構](#專案結構)
+- [授權條款](#授權條款)
+
+<h2 id="功能">功能 <a href="#目錄">⬆</a></h2>
+
+- **輸出格式**：JPG 或 PNG
+- **可調整 DPI**：72–600（預設 300）
+- **JPEG 品質控制**：10–100%（預設 90%）
+- **彈性頁面選取**：轉換全部頁面、指定頁面或範圍（例如 `1-5, 8, 10-12`）
+- **並行轉換**：可設定 1–20 個 worker 進程同時轉換；每個 worker 為獨立子進程，各自擁有獨立的 MuPDF 實例，完全隔離
+- **即時頁面預覽**：支援縮放（滾輪）和平移（拖曳）；雙擊重置視圖
+- **即時轉換進度**：逐頁顯示轉換進度
+- **自訂輸出目錄**：可選擇儲存位置，或預設與 PDF 同目錄
+- **多語言介面**：English、繁體中文 — 從右上角下拉選單切換，偏好設定自動儲存
+
+<h2 id="快速開始">快速開始 <a href="#目錄">⬆</a></h2>
+
+<h3 id="方式-a下載預編譯版本推薦">方式 A：下載預編譯版本（推薦） <a href="#目錄">⬆</a></h3>
+
+1. 前往 [Releases](https://github.com/alexwudev/go-pdf2image/releases) 頁面
+2. 下載最新的 `go-pdf2image.zip`
+3. 解壓縮到任意資料夾
+4. 執行 `pdf2image.exe`
+
+> **注意**：`libmupdf.dll` 必須與 `pdf2image.exe` 放在同一目錄下，發行版本中已包含此檔案。
+
+<h3 id="方式-b從原始碼編譯">方式 B：從原始碼編譯 <a href="#目錄">⬆</a></h3>
+
+請參閱下方[從原始碼建置](#從原始碼建置)。
+
+<h2 id="使用方式">使用方式 <a href="#目錄">⬆</a></h2>
+
+1. 啟動 `pdf2image.exe`
+2. 點擊**瀏覽檔案**（或拖放檔案）開啟 PDF
+3. 使用導覽按鈕翻頁；滾輪縮放，拖曳平移
+4. 在左側面板調整輸出設定：
+   - **輸出格式**：JPG 或 PNG
+   - **DPI**：滑桿調整解析度（72–600）
+   - **JPEG 品質**：滑桿調整壓縮程度（僅 JPG）
+   - **同時處理數**：滑桿調整並行 worker 進程數量（1–20）
+   - **頁面範圍**：轉換全部頁面或自訂範圍
+   - **輸出目錄**：選擇儲存目的資料夾
+5. 點擊**開始轉換**
+6. 轉換完成的圖片將儲存至輸出目錄
+
+<h2 id="前置需求">前置需求 <a href="#目錄">⬆</a></h2>
+
+- **Windows 10/11**（x64）
+- **[Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)**（大多數 Windows 10/11 系統已預裝）
+- **`libmupdf.dll`** 必須與執行檔放在同一目錄（發行版本中已包含）
+
+<h2 id="從原始碼建置">從原始碼建置 <a href="#目錄">⬆</a></h2>
+
+<h3 id="需求">需求 <a href="#目錄">⬆</a></h3>
+
+- [Go](https://go.dev/) 1.24+
+- [Node.js](https://nodejs.org/)
+- [go-winres](https://github.com/tc-hib/go-winres)（嵌入應用程式圖示用）：`go install github.com/tc-hib/go-winres@latest`
+
+<h3 id="wsl交叉編譯為-windows">WSL（交叉編譯為 Windows） <a href="#目錄">⬆</a></h3>
+
+```bash
+./build.sh
+```
+
+<h3 id="windows原生編譯">Windows（原生編譯） <a href="#目錄">⬆</a></h3>
+
+```batch
+build.bat
+```
+
+<h3 id="開發模式">開發模式 <a href="#目錄">⬆</a></h3>
+
+需要 [Wails CLI](https://wails.io/docs/gettingstarted/installation)。
+
+```bash
+wails dev
+```
+
+<h3 id="libmupdf-dll">libmupdf.dll <a href="#目錄">⬆</a></h3>
+
+執行檔需要 `libmupdf.dll`（MuPDF 1.24.9, x64）放在同一目錄。從 WSL 交叉編譯：
+
+```bash
+# 需要 mingw-w64：sudo apt install gcc-mingw-w64-x86-64
+git clone --recursive --branch 1.24.9 --depth 1 https://github.com/ArtifexSoftware/mupdf.git
+cd mupdf
+make OS=mingw64-cross shared=yes build=release \
+  HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
+  -j$(nproc)
+# 輸出：build/shared-release/libmupdf.dll
+```
+
+<h2 id="專案結構">專案結構 <a href="#目錄">⬆</a></h2>
+
+```
+go-pdf2image/
+├── main.go              # 進入點：GUI 模式或 --worker 子進程模式
+├── app.go               # Go 後端：PDF 資訊、預覽、多進程轉換
+├── worker.go            # 無介面 worker 子進程：渲染與編碼頁面
+├── wails.json           # Wails 專案設定
+├── winres.json          # go-winres 設定（圖示與 manifest 嵌入）
+├── go.mod / go.sum      # Go 依賴
+├── libmupdf.dll         # MuPDF 動態連結庫（執行時依賴）
+├── build.sh             # WSL 交叉編譯腳本
+├── build.bat            # Windows 原生編譯腳本
+├── LICENSE              # MIT 授權
+├── build/
+│   ├── appicon.png      # 應用程式圖示
+│   └── windows/         # Windows manifest 與圖示
+├── docs/                # 翻譯版 README
+└── frontend/
+    ├── index.html       # 主要 HTML
+    ├── package.json     # 前端依賴
+    ├── vite.config.ts   # Vite 設定
+    └── src/
+        ├── main.ts          # Vue 應用初始化
+        ├── App.vue          # 根元件佈局 + 語言切換
+        ├── style.css        # 全域樣式
+        ├── i18n/            # 國際化（en、zh-TW）
+        ├── stores/
+        │   └── appStore.ts  # Pinia 狀態管理
+        └── components/
+            ├── PdfImport.vue       # PDF 檔案選擇器
+            ├── SettingsPanel.vue   # 輸出設定（格式、DPI、品質、並行數、頁面）
+            ├── ActionBar.vue       # 轉換按鈕與狀態訊息
+            ├── PreviewPanel.vue    # 頁面預覽（縮放/平移）
+            └── ConvertProgress.vue # 轉換進度條
+```
+
+<h2 id="授權條款">授權條款 <a href="#目錄">⬆</a></h2>
+
+[MIT](../LICENSE)

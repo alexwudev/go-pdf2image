@@ -1,0 +1,40 @@
+{
+  "app": { "title": "PDF2Image", "subtitle": "PDF to Image Converter" },
+  "nav": { "home": "Workspace" },
+  "import": {
+    "title": "Import PDF",
+    "dragDrop": "Drag & drop PDF here",
+    "or": "or",
+    "browse": "Browse Files",
+    "supported": "Supports PDF format",
+    "pageCount": "{count} pages"
+  },
+  "settings": {
+    "title": "Output Settings",
+    "dpi": "DPI",
+    "quality": "JPEG Quality",
+    "format": "Output Format",
+    "pages": "Page Range",
+    "pagesAll": "All",
+    "pagesHint": "e.g. 1-5, 8, 10-12",
+    "outputDir": "Output Directory",
+    "selectDir": "Select Directory",
+    "sameAsPdf": "Same as PDF",
+    "workers": "Concurrency"
+  },
+  "action": { "convert": "Convert", "converting": "Converting...", "openDir": "Open Output" },
+  "preview": {
+    "title": "Preview",
+    "page": "Page {page}",
+    "noFile": "No PDF selected",
+    "pageNav": "Page Navigation"
+  },
+  "progress": {
+    "converting": "Converting page {current}/{total}",
+    "done": "Done"
+  },
+  "message": {
+    "convertSuccess": "Successfully converted {count} pages to {dir}",
+    "convertError": "Conversion failed: {error}"
+  }
+}

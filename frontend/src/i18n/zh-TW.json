@@ -1,0 +1,40 @@
+{
+  "app": { "title": "PDF2Image", "subtitle": "PDF 轉圖片工具" },
+  "nav": { "home": "工作區" },
+  "import": {
+    "title": "匯入 PDF",
+    "dragDrop": "拖放 PDF 至此處",
+    "or": "或",
+    "browse": "瀏覽檔案",
+    "supported": "支援 PDF 格式",
+    "pageCount": "共 {count} 頁"
+  },
+  "settings": {
+    "title": "輸出設定",
+    "dpi": "DPI",
+    "quality": "JPEG 品質",
+    "format": "輸出格式",
+    "pages": "頁面範圍",
+    "pagesAll": "全部",
+    "pagesHint": "例如：1-5, 8, 10-12",
+    "outputDir": "輸出目錄",
+    "selectDir": "選擇目錄",
+    "sameAsPdf": "與 PDF 同目錄",
+    "workers": "同時處理數"
+  },
+  "action": { "convert": "開始轉換", "converting": "轉換中...", "openDir": "開啟輸出目錄" },
+  "preview": {
+    "title": "預覽",
+    "page": "第 {page} 頁",
+    "noFile": "尚未選擇 PDF",
+    "pageNav": "頁面導覽"
+  },
+  "progress": {
+    "converting": "正在轉換第 {current}/{total} 頁",
+    "done": "完成"
+  },
+  "message": {
+    "convertSuccess": "已成功轉換 {count} 頁至 {dir}",
+    "convertError": "轉換失敗：{error}"
+  }
+}
