@@ -15,6 +15,7 @@
 - [功能](#功能)
 - [快速開始](#快速開始)
 - [使用方式](#使用方式)
+- [命令列模式](#命令列模式)
 - [前置需求](#前置需求)
 - [從原始碼建置](#從原始碼建置)
 - [專案結構](#專案結構)
@@ -65,6 +66,40 @@
    - **打包為 ZIP**：勾選後輸出為單一 `.zip` 壓縮檔
 5. 點擊**開始轉換**（點擊**停止**可隨時取消）
 6. 轉換完成的圖片（或 ZIP）將儲存至輸出目錄
+
+<h2 id="命令列模式">命令列模式 <a href="#目錄">⬆</a></h2>
+
+不開啟 GUI，直接從命令列執行轉換：
+
+```bash
+pdf2image.exe --cli --pdf INPUT.pdf [選項]
+```
+
+| 選項 | 預設值 | 說明 |
+|---|---|---|
+| `--pdf PATH` | *（必填）* | 輸入 PDF 檔案 |
+| `--format jpg\|png` | `jpg` | 輸出圖片格式 |
+| `--dpi N` | `300` | 解析度（72–600） |
+| `--quality N` | `90` | JPEG 品質（10–100，僅 JPG） |
+| `--pages SPEC` | 全部 | 頁面選取（例如 `1-5,8,10-12`） |
+| `--output DIR` | 與 PDF 同目錄 | 輸出目錄 |
+| `--workers N` | `4` | 並行 worker 進程數（1–20） |
+| `--zip` | 關閉 | 將輸出打包為單一 `.zip` 檔案 |
+
+**範例：**
+
+```bash
+pdf2image.exe --cli --pdf report.pdf --format png --dpi 150 --pages 1-10 --workers 8 --output ./images
+```
+
+進度輸出至 stderr：
+
+```
+PDF: report.pdf (50 pages)
+Converting 10 pages | format=png dpi=150 quality=90 workers=8
+[10/10] 100% - Page 10 done
+Done! 10 files in 5.2s → ./images
+```
 
 <h2 id="前置需求">前置需求 <a href="#目錄">⬆</a></h2>
 
@@ -118,8 +153,9 @@ make OS=mingw64-cross shared=yes build=release \
 
 ```
 go-pdf2image/
-├── main.go              # 進入點：無邊框 GUI 或 --worker 子進程模式
+├── main.go              # 進入點：無邊框 GUI、--cli 或 --worker 子進程模式
 ├── app.go               # Go 後端：PDF 資訊、預覽、多進程轉換
+├── cli.go               # 命令列模式：不開啟 GUI 直接轉換
 ├── worker.go            # 無介面 worker 子進程：渲染與編碼頁面
 ├── taskbar_windows.go   # Windows 工作列進度（ITaskbarList3）與圖示
 ├── taskbar_stub.go      # 非 Windows 平台的空實作

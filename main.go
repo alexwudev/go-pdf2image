@@ -19,6 +19,12 @@ func main() {
 		return
 	}
 
+	// CLI mode: command-line conversion without GUI
+	if len(os.Args) > 1 && os.Args[1] == "--cli" {
+		runCLI(os.Args[2:])
+		return
+	}
+
 	// GUI mode
 	app := NewApp()
 

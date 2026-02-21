@@ -15,6 +15,7 @@ A Windows desktop application for converting PDF pages to high-quality images, b
 - [Features](#features)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
+- [CLI Mode](#cli-mode)
 - [Prerequisites](#prerequisites)
 - [Building from Source](#building-from-source)
 - [Project Structure](#project-structure)
@@ -65,6 +66,40 @@ See [Building from Source](#building-from-source) below.
    - **Package as ZIP**: check to output a single `.zip` file instead of individual images
 5. Click **Convert** (click **Stop** to cancel mid-conversion)
 6. Converted images (or ZIP) are saved to the output directory
+
+<h2 id="cli-mode">CLI Mode <a href="#table-of-contents">⬆</a></h2>
+
+Run conversions from the command line without opening the GUI:
+
+```bash
+pdf2image.exe --cli --pdf INPUT.pdf [options]
+```
+
+| Option | Default | Description |
+|---|---|---|
+| `--pdf PATH` | *(required)* | Input PDF file |
+| `--format jpg\|png` | `jpg` | Output image format |
+| `--dpi N` | `300` | Resolution (72–600) |
+| `--quality N` | `90` | JPEG quality (10–100, JPG only) |
+| `--pages SPEC` | all | Page selection (e.g. `1-5,8,10-12`) |
+| `--output DIR` | same as PDF | Output directory |
+| `--workers N` | `4` | Number of parallel worker processes (1–20) |
+| `--zip` | off | Package output into a single `.zip` file |
+
+**Example:**
+
+```bash
+pdf2image.exe --cli --pdf report.pdf --format png --dpi 150 --pages 1-10 --workers 8 --output ./images
+```
+
+Progress is printed to stderr:
+
+```
+PDF: report.pdf (50 pages)
+Converting 10 pages | format=png dpi=150 quality=90 workers=8
+[10/10] 100% - Page 10 done
+Done! 10 files in 5.2s → ./images
+```
 
 <h2 id="prerequisites">Prerequisites <a href="#table-of-contents">⬆</a></h2>
 
@@ -118,8 +153,9 @@ make OS=mingw64-cross shared=yes build=release \
 
 ```
 go-pdf2image/
-├── main.go              # Entry point: frameless GUI or --worker subprocess mode
+├── main.go              # Entry point: frameless GUI, --cli, or --worker subprocess mode
 ├── app.go               # Go backend: PDF info, preview, multi-process conversion
+├── cli.go               # CLI mode: command-line conversion without GUI
 ├── worker.go            # Headless worker subprocess: render & encode pages
 ├── taskbar_windows.go   # Windows taskbar progress (ITaskbarList3) & icon
 ├── taskbar_stub.go      # No-op stub for non-Windows builds

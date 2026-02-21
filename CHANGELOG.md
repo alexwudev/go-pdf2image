@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.2.0
+
+### New Features
+
+- **CLI mode**: run conversions from the command line without opening the GUI
+  ```
+  pdf2image.exe --cli --pdf FILE [--format jpg|png] [--dpi N] [--quality N] [--pages SPEC] [--output DIR] [--workers N] [--zip]
+  ```
+
 ## v1.1.0
 
 ### New Features
