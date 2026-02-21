@@ -32,7 +32,7 @@ if (saved && languages.some(l => l.code === saved)) {
 // Update window title with conversion progress
 watch(() => store.progress.percent, (pct) => {
   if (store.isConverting && pct > 0 && pct < 100) {
-    WindowSetTitle(`PDF2Image - ${Math.round(pct)}%`)
+    WindowSetTitle(`${Math.round(pct)}% - PDF2Image`)
   }
 })
 watch(() => store.isConverting, (converting) => {
@@ -44,17 +44,19 @@ watch(() => store.isConverting, (converting) => {
 
 <template>
   <div class="app">
-    <div v-if="store.isConverting || store.progress.percent > 0" class="title-prog">
-      <div class="title-prog-fill" :class="{ done: store.progress.percent >= 100 }" :style="{ width: store.progress.percent + '%' }"/>
-    </div>
     <header class="hdr">
-      <div class="hdr-l">
-        <h1 class="brand">{{ t('app.title') }}</h1>
-        <span class="sub">{{ store.isConverting ? Math.round(store.progress.percent) + '%' : t('app.subtitle') }}</span>
+      <div v-if="store.isConverting || store.progress.percent > 0"
+           class="hdr-fill" :class="{ done: store.progress.percent >= 100 }"
+           :style="{ width: store.progress.percent + '%' }"/>
+      <div class="hdr-content">
+        <div class="hdr-l">
+          <h1 class="brand">{{ t('app.title') }}</h1>
+          <span class="sub">{{ store.isConverting ? Math.round(store.progress.percent) + '%' : t('app.subtitle') }}</span>
+        </div>
+        <select class="lang-sel" :value="locale" @change="switchLang">
+          <option v-for="lang in languages" :key="lang.code" :value="lang.code">{{ lang.label }}</option>
+        </select>
       </div>
-      <select class="lang-sel" :value="locale" @change="switchLang">
-        <option v-for="lang in languages" :key="lang.code" :value="lang.code">{{ lang.label }}</option>
-      </select>
     </header>
     <main class="main">
       <aside class="left">
@@ -72,10 +74,10 @@ watch(() => store.isConverting, (converting) => {
 
 <style>
 .app{display:flex;flex-direction:column;height:100vh;background:#18181b;color:#e4e4e7;font-family:'Segoe UI',system-ui,sans-serif}
-.title-prog{height:3px;background:#27272a;width:100%;flex-shrink:0}
-.title-prog-fill{height:100%;background:#2563eb;transition:width .3s}
-.title-prog-fill.done{background:#22c55e}
-.hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:#09090b;border-bottom:1px solid #27272a}
+.hdr{position:relative;overflow:hidden;background:#09090b;border-bottom:1px solid #27272a}
+.hdr-fill{position:absolute;top:0;left:0;height:100%;background:rgba(37,99,235,.25);transition:width .3s;pointer-events:none}
+.hdr-fill.done{background:rgba(34,197,94,.2)}
+.hdr-content{position:relative;display:flex;align-items:center;justify-content:space-between;padding:12px 24px}
 .hdr-l{display:flex;align-items:baseline;gap:12px}
 .brand{font-size:20px;font-weight:700;color:#f4f4f5;margin:0}
 .sub{font-size:13px;color:#71717a}
