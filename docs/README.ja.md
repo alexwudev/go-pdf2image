@@ -223,10 +223,8 @@ go-pdf2image/
 │   └── build.bat        # Windows native build script
 ├── platform/
 │   ├── windows/
-│   │   ├── libmupdf.dll     # MuPDF shared library (runtime)
 │   │   └── winres.json      # go-winres config (icon & manifest)
 │   └── linux/
-│       └── libmupdf.so      # MuPDF shared library (runtime)
 ├── build/
 │   ├── appicon.png      # App icon
 │   └── windows/         # Windows manifest & icon resources
