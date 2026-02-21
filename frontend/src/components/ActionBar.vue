@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/appStore'
-import { ConvertPDF, CancelConvert } from '../../wailsjs/go/main/App'
+import { ConvertPDF, CancelConvert } from '../../wailsjs/go/app/App'
 import { EventsOn } from '../../wailsjs/runtime/runtime'
 
 const { t } = useI18n()

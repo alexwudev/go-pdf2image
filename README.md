@@ -148,22 +148,22 @@ sudo apt install gcc pkg-config libgtk-3-dev libwebkit2gtk-4.0-dev
 <h3 id="wsl-cross-compile-to-windows">WSL (cross-compile to Windows) <a href="#table-of-contents">⬆</a></h3>
 
 ```bash
-./build.sh            # or: ./build.sh windows
-# Output: platform/windows/pdf2image.exe
+./scripts/build.sh            # or: ./scripts/build.sh windows
+# Output: pdf2image.exe (project root)
 ```
 
 <h3 id="linux-native">Linux (native) <a href="#table-of-contents">⬆</a></h3>
 
 ```bash
-./build.sh linux
+./scripts/build.sh linux
 # Output: platform/linux/pdf2image
 ```
 
 <h3 id="windows-native">Windows (native) <a href="#table-of-contents">⬆</a></h3>
 
 ```batch
-build.bat
-REM Output: platform\windows\pdf2image.exe
+scripts\build.bat
+REM Output: pdf2image.exe (project root)
 ```
 
 <h3 id="development-mode">Development Mode <a href="#table-of-contents">⬆</a></h3>
@@ -206,29 +206,31 @@ make shared=yes build=release \
 ```
 go-pdf2image/
 ├── main.go              # Entry point: frameless GUI, --cli, or --worker subprocess mode
-├── app.go               # Go backend: PDF info, preview, multi-process conversion
-├── cli.go               # CLI mode: command-line conversion without GUI
-├── worker.go            # Headless worker subprocess: render & encode pages
-├── taskbar_windows.go   # Windows taskbar progress (ITaskbarList3) & icon
-├── taskbar_stub.go      # No-op stub for non-Windows builds
 ├── go.mod / go.sum      # Go dependencies
 ├── wails.json           # Wails project config
-├── build.sh             # Quickstart build script (interactive menu or argument)
-├── build.bat            # Windows native build script
+├── LICENSE
+├── README.md
+├── internal/
+│   ├── app/
+│   │   ├── app.go       # App struct, PDF info, preview, multi-process conversion
+│   │   ├── cli.go       # CLI mode: command-line conversion without GUI
+│   │   └── worker.go    # Headless worker subprocess: render & encode pages
+│   └── taskbar/
+│       ├── taskbar_windows.go  # Windows taskbar progress (ITaskbarList3) & icon
+│       └── taskbar_stub.go     # No-op stub for non-Windows builds
+├── scripts/
+│   ├── build.sh         # Quickstart build script (interactive menu or argument)
+│   └── build.bat        # Windows native build script
 ├── platform/
 │   ├── windows/
 │   │   ├── libmupdf.dll     # MuPDF shared library (runtime)
-│   │   ├── winres.json      # go-winres config (icon & manifest)
-│   │   └── pdf2image.exe    # Build output
+│   │   └── winres.json      # go-winres config (icon & manifest)
 │   └── linux/
-│       ├── libmupdf.so      # MuPDF shared library (runtime)
-│       └── pdf2image         # Build output
+│       └── libmupdf.so      # MuPDF shared library (runtime)
 ├── build/
 │   ├── appicon.png      # App icon
 │   └── windows/         # Windows manifest & icon resources
-├── docs/                # Translated READMEs
-├── CHANGELOG.md
-├── LICENSE
+├── docs/                # Translated READMEs, CHANGELOG
 └── frontend/
     ├── index.html
     ├── package.json

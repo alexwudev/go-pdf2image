@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"bufio"
@@ -15,7 +15,7 @@ import (
 	"github.com/gen2brain/go-fitz"
 )
 
-func runCLI(args []string) {
+func RunCLI(args []string) {
 	var pdfPath, format, pagesSpec, outputDir string
 	var dpi float64
 	var quality, workers int
@@ -87,7 +87,7 @@ func runCLI(args []string) {
 	fmt.Fprintf(os.Stderr, "PDF: %s (%d pages)\n", filepath.Base(pdfPath), totalInPDF)
 
 	// Parse pages
-	pages := parsePages(pagesSpec, totalInPDF)
+	pages := ParsePages(pagesSpec, totalInPDF)
 	if len(pages) == 0 {
 		fmt.Fprintln(os.Stderr, "Error: no valid pages to convert")
 		os.Exit(1)
@@ -128,7 +128,7 @@ func runCLI(args []string) {
 	fmt.Fprintf(os.Stderr, "Converting %d pages | format=%s dpi=%.0f quality=%d workers=%d\n", totalPages, format, dpi, quality, workers)
 
 	// Split pages into chunks
-	chunks := splitIntoChunks(pages, workers)
+	chunks := SplitIntoChunks(pages, workers)
 
 	exePath, err := os.Executable()
 	if err != nil {
@@ -238,7 +238,7 @@ func runCLI(args []string) {
 	if zipOutput && len(outputFiles) > 0 {
 		zipPath := filepath.Join(outputDir, baseName+".zip")
 		fmt.Fprintf(os.Stderr, "Creating ZIP: %s\n", zipPath)
-		if err := createZip(zipPath, outputFiles); err != nil {
+		if err := CreateZip(zipPath, outputFiles); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: ZIP creation failed: %v\n", err)
 			os.Exit(1)
 		}

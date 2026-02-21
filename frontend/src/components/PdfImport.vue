@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/appStore'
-import { OpenPDFDialog } from '../../wailsjs/go/main/App'
+import { OpenPDFDialog } from '../../wailsjs/go/app/App'
 
 const { t } = useI18n()
 const store = useAppStore()

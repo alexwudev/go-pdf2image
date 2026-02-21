@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"archive/zip"
@@ -18,6 +18,8 @@ import (
 
 	"github.com/gen2brain/go-fitz"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
+
+	"pdf2image/internal/taskbar"
 )
 
 type App struct {
@@ -31,9 +33,9 @@ func NewApp() *App {
 	return &App{}
 }
 
-func (a *App) startup(ctx context.Context) {
+func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
-	initTaskbar()
+	taskbar.Init()
 }
 
 // --- File dialogs ---
@@ -128,7 +130,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 		a.cancelFn = nil
 		a.cancelMu.Unlock()
 		cancel()
-		setTaskbarProgress(0) // clear taskbar progress
+		taskbar.SetProgress(0) // clear taskbar progress
 	}()
 
 	// Validate PDF
@@ -139,7 +141,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 	total := doc.NumPage()
 	doc.Close()
 
-	pages := parsePages(cfg.Pages, total)
+	pages := ParsePages(cfg.Pages, total)
 	if len(pages) == 0 {
 		return ConvertResult{Error: "沒有有效的頁面可轉換"}
 	}
@@ -179,7 +181,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 	totalPages := len(pages)
 
 	// Split pages into chunks for each worker
-	chunks := splitIntoChunks(pages, workers)
+	chunks := SplitIntoChunks(pages, workers)
 
 	// Get exe path for spawning worker subprocesses
 	exePath, err := os.Executable()
@@ -252,7 +254,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 
 						cur := atomic.AddInt64(&done, 1)
 						pct := float64(cur) / float64(totalPages) * 100
-						setTaskbarProgress(pct)
+						taskbar.SetProgress(pct)
 						wailsRuntime.EventsEmit(a.ctx, "convert:progress", map[string]interface{}{
 							"current": cur,
 							"total":   totalPages,
@@ -311,7 +313,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 			"status":  "zipping",
 		})
 		zipPath := filepath.Join(outDir, baseName+".zip")
-		if err := createZip(zipPath, outputFiles); err != nil {
+		if err := CreateZip(zipPath, outputFiles); err != nil {
 			return ConvertResult{Error: fmt.Sprintf("建立 ZIP 失敗：%v", err)}
 		}
 		for _, f := range outputFiles {
@@ -341,8 +343,8 @@ func (a *App) CancelConvert() {
 	}
 }
 
-// createZip packages the given files into a ZIP archive.
-func createZip(zipPath string, files []string) error {
+// CreateZip packages the given files into a ZIP archive.
+func CreateZip(zipPath string, files []string) error {
 	zf, err := os.Create(zipPath)
 	if err != nil {
 		return err
@@ -370,8 +372,8 @@ func createZip(zipPath string, files []string) error {
 	return nil
 }
 
-// splitIntoChunks divides pages into n roughly equal chunks.
-func splitIntoChunks(pages []int, n int) [][]int {
+// SplitIntoChunks divides pages into n roughly equal chunks.
+func SplitIntoChunks(pages []int, n int) [][]int {
 	chunks := make([][]int, n)
 	for i, p := range pages {
 		chunks[i%n] = append(chunks[i%n], p)
@@ -379,10 +381,10 @@ func splitIntoChunks(pages []int, n int) [][]int {
 	return chunks
 }
 
-// parsePages parses a page specification string.
+// ParsePages parses a page specification string.
 // "all" or "" → all pages; "1,3,5" → specific pages; "2-5" → range.
 // Returns 0-based page indices.
-func parsePages(spec string, total int) []int {
+func ParsePages(spec string, total int) []int {
 	spec = strings.TrimSpace(spec)
 	if spec == "" || strings.ToLower(spec) == "all" {
 		pages := make([]int, total)

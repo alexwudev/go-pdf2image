@@ -4,6 +4,8 @@ import (
 	"embed"
 	"os"
 
+	"pdf2image/internal/app"
+
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -15,18 +17,18 @@ var assets embed.FS
 func main() {
 	// Worker mode: headless subprocess for parallel PDF rendering
 	if len(os.Args) > 1 && os.Args[1] == "--worker" {
-		runWorker(os.Args[2:])
+		app.RunWorker(os.Args[2:])
 		return
 	}
 
 	// CLI mode: command-line conversion without GUI
 	if len(os.Args) > 1 && os.Args[1] == "--cli" {
-		runCLI(os.Args[2:])
+		app.RunCLI(os.Args[2:])
 		return
 	}
 
 	// GUI mode
-	app := NewApp()
+	a := app.NewApp()
 
 	err := wails.Run(&options.App{
 		Title:            "PDF2Image",
@@ -39,9 +41,9 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 24, G: 24, B: 27, A: 1},
-		OnStartup:        app.startup,
+		OnStartup:        a.Startup,
 		Bind: []interface{}{
-			app,
+			a,
 		},
 	})
 

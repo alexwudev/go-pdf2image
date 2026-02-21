@@ -148,22 +148,22 @@ sudo apt install gcc pkg-config libgtk-3-dev libwebkit2gtk-4.0-dev
 <h3 id="wslからwindowsへクロスコンパイル">WSL（Windows へクロスコンパイル） <a href="#目次">⬆</a></h3>
 
 ```bash
-./build.sh            # または：./build.sh windows
-# 出力：platform/windows/pdf2image.exe
+./scripts/build.sh            # または：./scripts/build.sh windows
+# 出力：pdf2image.exe (project root)
 ```
 
 <h3 id="linuxネイティブ">Linux（ネイティブ） <a href="#目次">⬆</a></h3>
 
 ```bash
-./build.sh linux
+./scripts/build.sh linux
 # 出力：platform/linux/pdf2image
 ```
 
 <h3 id="windowsネイティブ">Windows（ネイティブ） <a href="#目次">⬆</a></h3>
 
 ```batch
-build.bat
-REM 出力：platform\windows\pdf2image.exe
+scripts\build.bat
+REM 出力：pdf2image.exe (project root)
 ```
 
 <h3 id="開発モード">開発モード <a href="#目次">⬆</a></h3>
@@ -205,47 +205,49 @@ make shared=yes build=release \
 
 ```
 go-pdf2image/
-├── main.go              # エントリポイント：フレームレス GUI、--cli、または --worker サブプロセスモード
-├── app.go               # Go バックエンド：PDF 情報、プレビュー、マルチプロセス変換
-├── cli.go               # CLI モード：GUI なしでコマンドラインから変換
-├── worker.go            # ヘッドレス worker サブプロセス：ページのレンダリングとエンコード
-├── taskbar_windows.go   # Windows タスクバー進捗（ITaskbarList3）とアイコン
-├── taskbar_stub.go      # 非 Windows 向けスタブ
-├── go.mod / go.sum      # Go 依存関係
-├── wails.json           # Wails プロジェクト設定
-├── build.sh             # Quickstart ビルドスクリプト（インタラクティブメニューまたは引数）
-├── build.bat            # Windows ネイティブビルドスクリプト
+├── main.go              # Entry point: frameless GUI, --cli, or --worker subprocess mode
+├── go.mod / go.sum      # Go dependencies
+├── wails.json           # Wails project config
+├── LICENSE
+├── README.md
+├── internal/
+│   ├── app/
+│   │   ├── app.go       # App struct, PDF info, preview, multi-process conversion
+│   │   ├── cli.go       # CLI mode: command-line conversion without GUI
+│   │   └── worker.go    # Headless worker subprocess: render & encode pages
+│   └── taskbar/
+│       ├── taskbar_windows.go  # Windows taskbar progress (ITaskbarList3) & icon
+│       └── taskbar_stub.go     # No-op stub for non-Windows builds
+├── scripts/
+│   ├── build.sh         # Quickstart build script (interactive menu or argument)
+│   └── build.bat        # Windows native build script
 ├── platform/
 │   ├── windows/
-│   │   ├── libmupdf.dll     # MuPDF 共有ライブラリ（ランタイム依存）
-│   │   ├── winres.json      # go-winres 設定（アイコンとマニフェスト）
-│   │   └── pdf2image.exe    # ビルド出力
+│   │   ├── libmupdf.dll     # MuPDF shared library (runtime)
+│   │   └── winres.json      # go-winres config (icon & manifest)
 │   └── linux/
-│       ├── libmupdf.so      # MuPDF 共有ライブラリ（ランタイム依存）
-│       └── pdf2image         # ビルド出力
+│       └── libmupdf.so      # MuPDF shared library (runtime)
 ├── build/
-│   ├── appicon.png      # アプリアイコン
-│   └── windows/         # Windows マニフェスト＆アイコンリソース
-├── docs/                # 翻訳版 README
-├── CHANGELOG.md
-├── LICENSE
+│   ├── appicon.png      # App icon
+│   └── windows/         # Windows manifest & icon resources
+├── docs/                # Translated READMEs, CHANGELOG
 └── frontend/
     ├── index.html
     ├── package.json
     ├── vite.config.ts
     └── src/
-        ├── main.ts          # Vue アプリ初期化
-        ├── App.vue          # ルートレイアウト、カスタムタイトルバー + 言語切替
-        ├── style.css        # グローバルスタイル
-        ├── i18n/            # 国際化（en、zh-TW）
+        ├── main.ts          # Vue app init
+        ├── App.vue          # Root layout, custom title bar + language switcher
+        ├── style.css        # Global styles
+        ├── i18n/            # Internationalization (en, zh-TW)
         ├── stores/
-        │   └── appStore.ts  # Pinia 状態管理
+        │   └── appStore.ts  # Pinia state management
         └── components/
-            ├── PdfImport.vue       # PDF ファイル選択
-            ├── SettingsPanel.vue   # 出力設定
-            ├── ActionBar.vue       # 変換ボタン＆ステータスメッセージ
-            ├── PreviewPanel.vue    # ページプレビュー（ズーム/パン）
-            └── ConvertProgress.vue # 変換プログレスバー
+            ├── PdfImport.vue       # PDF file picker
+            ├── SettingsPanel.vue   # Output settings
+            ├── ActionBar.vue       # Convert button & status messages
+            ├── PreviewPanel.vue    # Page preview with zoom/pan
+            └── ConvertProgress.vue # Conversion progress bar
 ```
 
 <h2 id="ライセンス">ライセンス <a href="#目次">⬆</a></h2>

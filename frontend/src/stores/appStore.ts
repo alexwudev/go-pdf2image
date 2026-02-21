@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
-import { GetPagePreview, GetPDFInfo } from '../../wailsjs/go/main/App'
+import { GetPagePreview, GetPDFInfo } from '../../wailsjs/go/app/App'
 
 export interface ConvertConfig {
   dpi: number

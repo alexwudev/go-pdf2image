@@ -1,5 +1,5 @@
 @echo off
-cd /d "%~dp0"
+cd /d "%~dp0\.."
 echo === Building frontend ===
 cd frontend
 call npm install
@@ -15,10 +15,10 @@ if %errorlevel% equ 0 (
 )
 
 echo === Building pdf2image.exe ===
-go build -tags desktop,production -ldflags "-H windowsgui" -o platform\windows\pdf2image.exe .
+go build -tags desktop,production -ldflags "-s -w -H windowsgui" -o pdf2image.exe .
 if %errorlevel% equ 0 (
-    del /q rsrc_windows_amd64.syso >nul 2>nul
-    echo Build OK! -^> platform\windows\pdf2image.exe
+    del /q rsrc_windows_*.syso >nul 2>nul
+    echo Build OK! -^> pdf2image.exe
 ) else (
     echo Build FAILED!
 )

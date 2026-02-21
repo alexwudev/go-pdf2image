@@ -1,8 +1,8 @@
 #!/bin/bash
 # PDF2Image Quickstart Build Script
-# Usage: ./build.sh [windows|linux]
+# Usage: ./scripts/build.sh [windows|linux]
 # 若不帶參數，會顯示互動式選單
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 # 載入 nvm
 export NVM_DIR="$HOME/.nvm"
@@ -58,15 +58,10 @@ if [ "$TARGET" = "windows" ]; then
         go build -tags desktop,production -ldflags "-s -w -H windowsgui" -o pdf2image.exe .
 
     if [ $? -eq 0 ]; then
-        mv pdf2image.exe platform/windows/
-        rm -f rsrc_windows_amd64.syso
+        rm -f rsrc_windows_*.syso
         echo ""
         echo "建置完成！"
-        ls -lh platform/windows/pdf2image.exe
-        echo ""
-        echo "輸出目錄：platform/windows/"
-        echo "  pdf2image.exe  — 主程式"
-        echo "  libmupdf.dll   — MuPDF 函式庫（執行時需放在同一目錄）"
+        ls -lh pdf2image.exe
     else
         echo "建置失敗！"
         exit 1

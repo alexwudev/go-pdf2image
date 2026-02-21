@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -12,11 +12,11 @@ import (
 	"github.com/gen2brain/go-fitz"
 )
 
-// runWorker is the headless subprocess entry point.
+// RunWorker is the headless subprocess entry point.
 // Args: --pdf PATH --pages 0,2,5 --dpi 300 --quality 90 --format jpg --outdir DIR --basename NAME
 // Output per page: OK\tpageIdx\toutPath\n
 // On error:        ERR\tmessage\n
-func runWorker(args []string) {
+func RunWorker(args []string) {
 	var pdfPath, pagesStr, format, outDir, baseName string
 	var dpi float64
 	var quality int

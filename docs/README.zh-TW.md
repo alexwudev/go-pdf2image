@@ -148,22 +148,22 @@ sudo apt install gcc pkg-config libgtk-3-dev libwebkit2gtk-4.0-dev
 <h3 id="wsl交叉編譯為-windows">WSL（交叉編譯為 Windows） <a href="#目錄">⬆</a></h3>
 
 ```bash
-./build.sh            # 或：./build.sh windows
-# 產出：platform/windows/pdf2image.exe
+./scripts/build.sh            # 或：./scripts/build.sh windows
+# 產出：pdf2image.exe (project root)
 ```
 
 <h3 id="linux原生編譯">Linux（原生編譯） <a href="#目錄">⬆</a></h3>
 
 ```bash
-./build.sh linux
+./scripts/build.sh linux
 # 產出：platform/linux/pdf2image
 ```
 
 <h3 id="windows原生編譯">Windows（原生編譯） <a href="#目錄">⬆</a></h3>
 
 ```batch
-build.bat
-REM 產出：platform\windows\pdf2image.exe
+scripts\build.bat
+REM 產出：pdf2image.exe (project root)
 ```
 
 <h3 id="開發模式">開發模式 <a href="#目錄">⬆</a></h3>
@@ -205,47 +205,49 @@ make shared=yes build=release \
 
 ```
 go-pdf2image/
-├── main.go              # 進入點：無邊框 GUI、--cli 或 --worker 子進程模式
-├── app.go               # Go 後端：PDF 資訊、預覽、多進程轉換
-├── cli.go               # 命令列模式：不開啟 GUI 直接轉換
-├── worker.go            # 無介面 worker 子進程：渲染與編碼頁面
-├── taskbar_windows.go   # Windows 工作列進度（ITaskbarList3）與圖示
-├── taskbar_stub.go      # 非 Windows 平台的空實作
-├── go.mod / go.sum      # Go 依賴
-├── wails.json           # Wails 專案設定
-├── build.sh             # Quickstart 建置腳本（互動選單或參數）
-├── build.bat            # Windows 原生編譯腳本
+├── main.go              # Entry point: frameless GUI, --cli, or --worker subprocess mode
+├── go.mod / go.sum      # Go dependencies
+├── wails.json           # Wails project config
+├── LICENSE
+├── README.md
+├── internal/
+│   ├── app/
+│   │   ├── app.go       # App struct, PDF info, preview, multi-process conversion
+│   │   ├── cli.go       # CLI mode: command-line conversion without GUI
+│   │   └── worker.go    # Headless worker subprocess: render & encode pages
+│   └── taskbar/
+│       ├── taskbar_windows.go  # Windows taskbar progress (ITaskbarList3) & icon
+│       └── taskbar_stub.go     # No-op stub for non-Windows builds
+├── scripts/
+│   ├── build.sh         # Quickstart build script (interactive menu or argument)
+│   └── build.bat        # Windows native build script
 ├── platform/
 │   ├── windows/
-│   │   ├── libmupdf.dll     # MuPDF 動態連結庫（執行時依賴）
-│   │   ├── winres.json      # go-winres 設定（圖示與 manifest 嵌入）
-│   │   └── pdf2image.exe    # 建置產出
+│   │   ├── libmupdf.dll     # MuPDF shared library (runtime)
+│   │   └── winres.json      # go-winres config (icon & manifest)
 │   └── linux/
-│       ├── libmupdf.so      # MuPDF 共用程式庫（執行時依賴）
-│       └── pdf2image         # 建置產出
+│       └── libmupdf.so      # MuPDF shared library (runtime)
 ├── build/
-│   ├── appicon.png      # 應用程式圖示
-│   └── windows/         # Windows manifest 與圖示資源
-├── docs/                # 翻譯版 README
-├── CHANGELOG.md
-├── LICENSE
+│   ├── appicon.png      # App icon
+│   └── windows/         # Windows manifest & icon resources
+├── docs/                # Translated READMEs, CHANGELOG
 └── frontend/
     ├── index.html
     ├── package.json
     ├── vite.config.ts
     └── src/
-        ├── main.ts          # Vue 應用初始化
-        ├── App.vue          # 根元件佈局、自訂標題列 + 語言切換
-        ├── style.css        # 全域樣式
-        ├── i18n/            # 國際化（en、zh-TW）
+        ├── main.ts          # Vue app init
+        ├── App.vue          # Root layout, custom title bar + language switcher
+        ├── style.css        # Global styles
+        ├── i18n/            # Internationalization (en, zh-TW)
         ├── stores/
-        │   └── appStore.ts  # Pinia 狀態管理
+        │   └── appStore.ts  # Pinia state management
         └── components/
-            ├── PdfImport.vue       # PDF 檔案選擇器
-            ├── SettingsPanel.vue   # 輸出設定
-            ├── ActionBar.vue       # 轉換按鈕與狀態訊息
-            ├── PreviewPanel.vue    # 頁面預覽（縮放/平移）
-            └── ConvertProgress.vue # 轉換進度條
+            ├── PdfImport.vue       # PDF file picker
+            ├── SettingsPanel.vue   # Output settings
+            ├── ActionBar.vue       # Convert button & status messages
+            ├── PreviewPanel.vue    # Page preview with zoom/pan
+            └── ConvertProgress.vue # Conversion progress bar
 ```
 
 <h2 id="授權條款">授權條款 <a href="#目錄">⬆</a></h2>
