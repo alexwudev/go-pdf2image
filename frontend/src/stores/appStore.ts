@@ -9,6 +9,7 @@ export interface ConvertConfig {
   pages: string
   output_dir: string
   workers: number
+  zip_output: boolean
 }
 
 export interface ProgressInfo {
@@ -36,7 +37,38 @@ export const useAppStore = defineStore('app', () => {
     pages: 'all',
     output_dir: '',
     workers: 4,
+    zip_output: false,
   })
+
+  // Timer state
+  const convertStartTime = ref(0)
+  const convertElapsed = ref('')
+  let timerInterval: ReturnType<typeof setInterval> | null = null
+
+  function formatElapsed(ms: number): string {
+    const totalSec = Math.floor(ms / 1000)
+    const min = Math.floor(totalSec / 60)
+    const sec = totalSec % 60
+    return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+  }
+
+  function startTimer() {
+    convertStartTime.value = Date.now()
+    convertElapsed.value = '00:00'
+    timerInterval = setInterval(() => {
+      convertElapsed.value = formatElapsed(Date.now() - convertStartTime.value)
+    }, 1000)
+  }
+
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval)
+      timerInterval = null
+    }
+    if (convertStartTime.value > 0) {
+      convertElapsed.value = formatElapsed(Date.now() - convertStartTime.value)
+    }
+  }
 
   async function setPdfPath(path: string) {
     pdfPath.value = path
@@ -89,11 +121,15 @@ export const useAppStore = defineStore('app', () => {
     progress.page = 0
     progress.percent = 0
     lastError.value = ''
+    convertElapsed.value = ''
+    convertStartTime.value = 0
   }
 
   return {
     pdfPath, pageCount, currentPage, previewUrl,
     isConverting, outputDir, outputFiles, lastError, progress, config,
+    convertElapsed,
     setPdfPath, loadPreview, updateProgress, reset, setError, clearError,
+    startTimer, stopTimer,
   }
 })

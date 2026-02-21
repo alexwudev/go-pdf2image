@@ -20,9 +20,10 @@
     "outputDir": "輸出目錄",
     "selectDir": "選擇目錄",
     "sameAsPdf": "與 PDF 同目錄",
-    "workers": "同時處理數"
+    "workers": "同時處理數",
+    "zipOutput": "打包為 ZIP 壓縮檔"
   },
-  "action": { "convert": "開始轉換", "converting": "轉換中...", "openDir": "開啟輸出目錄" },
+  "action": { "convert": "開始轉換", "converting": "轉換中...", "openDir": "開啟輸出目錄", "stop": "停止" },
   "preview": {
     "title": "預覽",
     "page": "第 {page} 頁",
@@ -31,7 +32,8 @@
   },
   "progress": {
     "converting": "正在轉換第 {current}/{total} 頁",
-    "done": "完成"
+    "done": "完成",
+    "zipping": "正在建立 ZIP 壓縮檔..."
   },
   "message": {
     "convertSuccess": "已成功轉換 {count} 頁至 {dir}",

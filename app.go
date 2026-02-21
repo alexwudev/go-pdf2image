@@ -1,11 +1,13 @@
 package main
 
 import (
+	"archive/zip"
 	"bufio"
 	"context"
 	"encoding/base64"
 	"fmt"
 	"image/jpeg"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,7 +21,10 @@ import (
 )
 
 type App struct {
-	ctx context.Context
+	ctx       context.Context
+	cancelMu  sync.Mutex
+	cancelFn  context.CancelFunc
+	cancelled bool
 }
 
 func NewApp() *App {
@@ -102,6 +107,7 @@ type ConvertConfig struct {
 	Pages     string  `json:"pages"`
 	OutputDir string  `json:"output_dir"`
 	Workers   int     `json:"workers"`
+	ZipOutput bool    `json:"zip_output"`
 }
 
 type ConvertResult struct {
@@ -110,6 +116,19 @@ type ConvertResult struct {
 }
 
 func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
+	// Create cancellable context for this conversion
+	ctx, cancel := context.WithCancel(context.Background())
+	a.cancelMu.Lock()
+	a.cancelFn = cancel
+	a.cancelled = false
+	a.cancelMu.Unlock()
+	defer func() {
+		a.cancelMu.Lock()
+		a.cancelFn = nil
+		a.cancelMu.Unlock()
+		cancel()
+	}()
+
 	// Validate PDF
 	doc, err := fitz.New(pdfPath)
 	if err != nil {
@@ -187,7 +206,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 		go func(pageList string) {
 			defer wg.Done()
 
-			cmd := exec.Command(exePath, "--worker",
+			cmd := exec.CommandContext(ctx, exePath, "--worker",
 				"--pdf", pdfPath,
 				"--pages", pageList,
 				"--dpi", fmt.Sprintf("%.0f", dpi),
@@ -254,6 +273,19 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 
 	wg.Wait()
 
+	// Check if cancelled
+	a.cancelMu.Lock()
+	wasCancelled := a.cancelled
+	a.cancelMu.Unlock()
+
+	if wasCancelled {
+		// Clean up partial output files
+		for _, path := range allFiles {
+			os.Remove(path)
+		}
+		return ConvertResult{Error: "cancelled"}
+	}
+
 	if firstErr != "" {
 		return ConvertResult{Error: firstErr}
 	}
@@ -266,6 +298,25 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 		}
 	}
 
+	// ZIP packaging
+	if cfg.ZipOutput && len(outputFiles) > 0 {
+		wailsRuntime.EventsEmit(a.ctx, "convert:progress", map[string]interface{}{
+			"current": totalPages,
+			"total":   totalPages,
+			"page":    0,
+			"percent": 99.0,
+			"status":  "zipping",
+		})
+		zipPath := filepath.Join(outDir, baseName+".zip")
+		if err := createZip(zipPath, outputFiles); err != nil {
+			return ConvertResult{Error: fmt.Sprintf("建立 ZIP 失敗：%v", err)}
+		}
+		for _, f := range outputFiles {
+			os.Remove(f)
+		}
+		outputFiles = []string{zipPath}
+	}
+
 	// Done
 	wailsRuntime.EventsEmit(a.ctx, "convert:progress", map[string]interface{}{
 		"current": totalPages,
@@ -275,6 +326,45 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 	})
 
 	return ConvertResult{OutputFiles: outputFiles}
+}
+
+// CancelConvert stops the current conversion by killing all worker subprocesses.
+func (a *App) CancelConvert() {
+	a.cancelMu.Lock()
+	defer a.cancelMu.Unlock()
+	if a.cancelFn != nil {
+		a.cancelled = true
+		a.cancelFn()
+	}
+}
+
+// createZip packages the given files into a ZIP archive.
+func createZip(zipPath string, files []string) error {
+	zf, err := os.Create(zipPath)
+	if err != nil {
+		return err
+	}
+	defer zf.Close()
+
+	w := zip.NewWriter(zf)
+	defer w.Close()
+
+	for _, fpath := range files {
+		fw, err := w.Create(filepath.Base(fpath))
+		if err != nil {
+			return err
+		}
+		f, err := os.Open(fpath)
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(fw, f)
+		f.Close()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // splitIntoChunks divides pages into n roughly equal chunks.

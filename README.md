@@ -28,7 +28,10 @@ A Windows desktop application for converting PDF pages to high-quality images, b
 - **Flexible page selection**: convert all pages, specific pages, or ranges (e.g. `1-5, 8, 10-12`)
 - **Parallel conversion**: configurable 1–20 worker processes for batch conversion; each worker is an independent subprocess with its own MuPDF instance for full isolation
 - **Live page preview**: zoom (scroll wheel) and pan (drag) support; double-click to reset view
-- **Real-time progress**: page-by-page conversion progress display
+- **Real-time progress**: page-by-page conversion progress display with title bar progress indicator
+- **Conversion timer**: live elapsed time during conversion; final duration shown on completion
+- **ZIP packaging**: optionally package all converted images into a single `.zip` file
+- **Stop button**: cancel an in-progress conversion; worker subprocesses are terminated and partial files cleaned up
 - **Custom output directory**: choose where to save, or default to the same directory as the PDF
 - **Multi-language UI**: English, 繁體中文 — switchable from the dropdown in the top-right corner, preference saved automatically
 
@@ -59,8 +62,9 @@ See [Building from Source](#building-from-source) below.
    - **Concurrency**: slide to set number of parallel worker processes (1–20)
    - **Page Range**: convert all pages or specify a custom range
    - **Output Directory**: choose a destination folder
-5. Click **Convert**
-6. Converted images are saved to the output directory
+   - **Package as ZIP**: check to output a single `.zip` file instead of individual images
+5. Click **Convert** (click **Stop** to cancel mid-conversion)
+6. Converted images (or ZIP) are saved to the output directory
 
 <h2 id="prerequisites">Prerequisites <a href="#table-of-contents">⬆</a></h2>
 
@@ -123,6 +127,7 @@ go-pdf2image/
 ├── libmupdf.dll         # MuPDF shared library (runtime dependency)
 ├── build.sh             # WSL cross-compile script
 ├── build.bat            # Windows native build script
+├── CHANGELOG.md         # Version history
 ├── LICENSE              # MIT License
 ├── build/
 │   ├── appicon.png      # App icon

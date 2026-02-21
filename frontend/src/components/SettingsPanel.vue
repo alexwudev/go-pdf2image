@@ -47,6 +47,11 @@ async function pickDir() {
       <span class="dir-path">{{ store.outputDir || t('settings.sameAsPdf') }}</span>
       <button class="dir-btn" @click="pickDir">{{ t('settings.selectDir') }}</button>
     </div>
+
+    <label class="chk-row">
+      <input type="checkbox" v-model="store.config.zip_output" class="chk" />
+      <span class="chk-label">{{ t('settings.zipOutput') }}</span>
+    </label>
   </div>
 </template>
 
@@ -66,4 +71,7 @@ async function pickDir() {
 .dir-path{flex:1;font-size:12px;color:#71717a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dir-btn{padding:5px 12px;border:1px solid #3f3f46;border-radius:6px;background:transparent;color:#d4d4d8;font-size:12px;cursor:pointer;white-space:nowrap}
 .dir-btn:hover{background:#27272a}
+.chk-row{display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer}
+.chk{accent-color:#3b82f6;width:16px;height:16px;cursor:pointer}
+.chk-label{font-size:13px;color:#d4d4d8}
 </style>

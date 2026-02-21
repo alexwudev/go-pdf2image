@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+import { watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAppStore } from './stores/appStore'
+import { WindowSetTitle } from '../wailsjs/runtime/runtime'
 import PdfImport from './components/PdfImport.vue'
 import SettingsPanel from './components/SettingsPanel.vue'
 import ActionBar from './components/ActionBar.vue'
@@ -7,6 +10,7 @@ import PreviewPanel from './components/PreviewPanel.vue'
 import ConvertProgress from './components/ConvertProgress.vue'
 
 const { t, locale } = useI18n()
+const store = useAppStore()
 
 const languages = [
   { code: 'zh-TW', label: '繁體中文' },
@@ -24,14 +28,29 @@ const saved = localStorage.getItem('pdf2image-lang')
 if (saved && languages.some(l => l.code === saved)) {
   locale.value = saved
 }
+
+// Update window title with conversion progress
+watch(() => store.progress.percent, (pct) => {
+  if (store.isConverting && pct > 0 && pct < 100) {
+    WindowSetTitle(`PDF2Image - ${Math.round(pct)}%`)
+  }
+})
+watch(() => store.isConverting, (converting) => {
+  if (!converting) {
+    WindowSetTitle('PDF2Image')
+  }
+})
 </script>
 
 <template>
   <div class="app">
+    <div v-if="store.isConverting || store.progress.percent > 0" class="title-prog">
+      <div class="title-prog-fill" :class="{ done: store.progress.percent >= 100 }" :style="{ width: store.progress.percent + '%' }"/>
+    </div>
     <header class="hdr">
       <div class="hdr-l">
         <h1 class="brand">{{ t('app.title') }}</h1>
-        <span class="sub">{{ t('app.subtitle') }}</span>
+        <span class="sub">{{ store.isConverting ? Math.round(store.progress.percent) + '%' : t('app.subtitle') }}</span>
       </div>
       <select class="lang-sel" :value="locale" @change="switchLang">
         <option v-for="lang in languages" :key="lang.code" :value="lang.code">{{ lang.label }}</option>
@@ -53,6 +72,9 @@ if (saved && languages.some(l => l.code === saved)) {
 
 <style>
 .app{display:flex;flex-direction:column;height:100vh;background:#18181b;color:#e4e4e7;font-family:'Segoe UI',system-ui,sans-serif}
+.title-prog{height:3px;background:#27272a;width:100%;flex-shrink:0}
+.title-prog-fill{height:100%;background:#2563eb;transition:width .3s}
+.title-prog-fill.done{background:#22c55e}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:#09090b;border-bottom:1px solid #27272a}
 .hdr-l{display:flex;align-items:baseline;gap:12px}
 .brand{font-size:20px;font-weight:700;color:#f4f4f5;margin:0}

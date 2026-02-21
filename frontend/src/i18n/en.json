@@ -20,9 +20,10 @@
     "outputDir": "Output Directory",
     "selectDir": "Select Directory",
     "sameAsPdf": "Same as PDF",
-    "workers": "Concurrency"
+    "workers": "Concurrency",
+    "zipOutput": "Package as ZIP"
   },
-  "action": { "convert": "Convert", "converting": "Converting...", "openDir": "Open Output" },
+  "action": { "convert": "Convert", "converting": "Converting...", "openDir": "Open Output", "stop": "Stop" },
   "preview": {
     "title": "Preview",
     "page": "Page {page}",
@@ -31,7 +32,8 @@
   },
   "progress": {
     "converting": "Converting page {current}/{total}",
-    "done": "Done"
+    "done": "Done",
+    "zipping": "Creating ZIP..."
   },
   "message": {
     "convertSuccess": "Successfully converted {count} pages to {dir}",
