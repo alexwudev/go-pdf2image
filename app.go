@@ -33,6 +33,7 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	initTaskbar()
 }
 
 // --- File dialogs ---
@@ -127,6 +128,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 		a.cancelFn = nil
 		a.cancelMu.Unlock()
 		cancel()
+		setTaskbarProgress(0) // clear taskbar progress
 	}()
 
 	// Validate PDF
@@ -250,6 +252,7 @@ func (a *App) ConvertPDF(pdfPath string, cfg ConvertConfig) ConvertResult {
 
 						cur := atomic.AddInt64(&done, 1)
 						pct := float64(cur) / float64(totalPages) * 100
+						setTaskbarProgress(pct)
 						wailsRuntime.EventsEmit(a.ctx, "convert:progress", map[string]interface{}{
 							"current": cur,
 							"total":   totalPages,
