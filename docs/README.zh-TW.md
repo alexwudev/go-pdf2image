@@ -28,7 +28,7 @@
 - **彈性頁面選取**：轉換全部頁面、指定頁面或範圍（例如 `1-5, 8, 10-12`）
 - **並行轉換**：可設定 1–20 個 worker 進程同時轉換；每個 worker 為獨立子進程，各自擁有獨立的 MuPDF 實例，完全隔離
 - **即時頁面預覽**：支援縮放（滾輪）和平移（拖曳）；雙擊重置視圖
-- **即時轉換進度**：逐頁顯示轉換進度，標題列同步顯示進度條
+- **即時轉換進度**：逐頁顯示轉換進度；自訂標題列隨進度填色；Windows 工作列按鈕同步顯示進度
 - **轉換計時**：轉換期間即時顯示已用時間；完成時顯示總耗時
 - **ZIP 打包**：可選將所有轉換圖片打包為單一 `.zip` 壓縮檔
 - **停止按鈕**：可隨時取消進行中的轉換；終止所有 worker 子進程並清理未完成的檔案
@@ -118,9 +118,11 @@ make OS=mingw64-cross shared=yes build=release \
 
 ```
 go-pdf2image/
-├── main.go              # 進入點：GUI 模式或 --worker 子進程模式
+├── main.go              # 進入點：無邊框 GUI 或 --worker 子進程模式
 ├── app.go               # Go 後端：PDF 資訊、預覽、多進程轉換
 ├── worker.go            # 無介面 worker 子進程：渲染與編碼頁面
+├── taskbar_windows.go   # Windows 工作列進度（ITaskbarList3）與圖示
+├── taskbar_stub.go      # 非 Windows 平台的空實作
 ├── wails.json           # Wails 專案設定
 ├── winres.json          # go-winres 設定（圖示與 manifest 嵌入）
 ├── go.mod / go.sum      # Go 依賴
@@ -139,7 +141,7 @@ go-pdf2image/
     ├── vite.config.ts   # Vite 設定
     └── src/
         ├── main.ts          # Vue 應用初始化
-        ├── App.vue          # 根元件佈局 + 語言切換
+        ├── App.vue          # 根元件佈局、自訂標題列 + 語言切換
         ├── style.css        # 全域樣式
         ├── i18n/            # 國際化（en、zh-TW）
         ├── stores/

@@ -28,7 +28,7 @@ A Windows desktop application for converting PDF pages to high-quality images, b
 - **Flexible page selection**: convert all pages, specific pages, or ranges (e.g. `1-5, 8, 10-12`)
 - **Parallel conversion**: configurable 1–20 worker processes for batch conversion; each worker is an independent subprocess with its own MuPDF instance for full isolation
 - **Live page preview**: zoom (scroll wheel) and pan (drag) support; double-click to reset view
-- **Real-time progress**: page-by-page conversion progress display with title bar progress indicator
+- **Real-time progress**: page-by-page progress display; custom title bar fills with color as conversion progresses; Windows taskbar button also shows progress
 - **Conversion timer**: live elapsed time during conversion; final duration shown on completion
 - **ZIP packaging**: optionally package all converted images into a single `.zip` file
 - **Stop button**: cancel an in-progress conversion; worker subprocesses are terminated and partial files cleaned up
@@ -118,9 +118,11 @@ make OS=mingw64-cross shared=yes build=release \
 
 ```
 go-pdf2image/
-├── main.go              # Entry point: GUI mode or --worker subprocess mode
+├── main.go              # Entry point: frameless GUI or --worker subprocess mode
 ├── app.go               # Go backend: PDF info, preview, multi-process conversion
 ├── worker.go            # Headless worker subprocess: render & encode pages
+├── taskbar_windows.go   # Windows taskbar progress (ITaskbarList3) & icon
+├── taskbar_stub.go      # No-op stub for non-Windows builds
 ├── wails.json           # Wails project config
 ├── winres.json          # go-winres config (icon & manifest embedding)
 ├── go.mod / go.sum      # Go dependencies
@@ -139,7 +141,7 @@ go-pdf2image/
     ├── vite.config.ts   # Vite config
     └── src/
         ├── main.ts          # Vue app init
-        ├── App.vue          # Root layout + language switcher
+        ├── App.vue          # Root layout, custom title bar + language switcher
         ├── style.css        # Global styles
         ├── i18n/            # Internationalization (en, zh-TW)
         ├── stores/
