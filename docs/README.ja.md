@@ -170,7 +170,7 @@ cd mupdf
 make OS=mingw64-cross shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# 出力：build/shared-release/libmupdf.dll
+# プロジェクトにコピー：cp build/shared-release/libmupdf.dll /path/to/go-pdf2image/platform/windows/
 ```
 
 **Linux**（`libmupdf.so`）— ネイティブビルド：
@@ -181,7 +181,7 @@ cd mupdf
 make shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# 出力：build/shared-release/libmupdf.so.24.9 → libmupdf.so にリネーム
+# プロジェクトにコピー：cp build/shared-release/libmupdf.so.24.9 /path/to/go-pdf2image/platform/linux/libmupdf.so
 ```
 
 <h2 id="プロジェクト構成">プロジェクト構成 <a href="#目次">⬆</a></h2>
@@ -194,23 +194,28 @@ go-pdf2image/
 ├── worker.go            # ヘッドレス worker サブプロセス：ページのレンダリングとエンコード
 ├── taskbar_windows.go   # Windows タスクバー進捗（ITaskbarList3）とアイコン
 ├── taskbar_stub.go      # 非 Windows 向けスタブ
-├── wails.json           # Wails プロジェクト設定
-├── winres.json          # go-winres 設定（アイコン＆マニフェスト埋め込み）
 ├── go.mod / go.sum      # Go 依存関係
-├── libmupdf.dll         # MuPDF 共有ライブラリ — Windows（ランタイム依存）
-├── libmupdf.so          # MuPDF 共有ライブラリ — Linux（ランタイム依存）
-├── build.sh             # ビルドスクリプト（Windows・Linux 対応）
+├── wails.json           # Wails プロジェクト設定
+├── build.sh             # Quickstart ビルドスクリプト（インタラクティブメニューまたは引数）
 ├── build.bat            # Windows ネイティブビルドスクリプト
-├── CHANGELOG.md         # バージョン履歴
-├── LICENSE              # MIT ライセンス
+├── platform/
+│   ├── windows/
+│   │   ├── libmupdf.dll     # MuPDF 共有ライブラリ（ランタイム依存）
+│   │   ├── winres.json      # go-winres 設定（アイコンとマニフェスト）
+│   │   └── pdf2image.exe    # ビルド出力
+│   └── linux/
+│       ├── libmupdf.so      # MuPDF 共有ライブラリ（ランタイム依存）
+│       └── pdf2image         # ビルド出力
 ├── build/
 │   ├── appicon.png      # アプリアイコン
-│   └── windows/         # Windows マニフェスト＆アイコン
+│   └── windows/         # Windows マニフェスト＆アイコンリソース
 ├── docs/                # 翻訳版 README
+├── CHANGELOG.md
+├── LICENSE
 └── frontend/
-    ├── index.html       # メイン HTML
-    ├── package.json     # フロントエンド依存関係
-    ├── vite.config.ts   # Vite 設定
+    ├── index.html
+    ├── package.json
+    ├── vite.config.ts
     └── src/
         ├── main.ts          # Vue アプリ初期化
         ├── App.vue          # ルートレイアウト、カスタムタイトルバー + 言語切替
@@ -220,7 +225,7 @@ go-pdf2image/
         │   └── appStore.ts  # Pinia 状態管理
         └── components/
             ├── PdfImport.vue       # PDF ファイル選択
-            ├── SettingsPanel.vue   # 出力設定（形式、DPI、品質、並列数、ページ）
+            ├── SettingsPanel.vue   # 出力設定
             ├── ActionBar.vue       # 変換ボタン＆ステータスメッセージ
             ├── PreviewPanel.vue    # ページプレビュー（ズーム/パン）
             └── ConvertProgress.vue # 変換プログレスバー

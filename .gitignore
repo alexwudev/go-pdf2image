@@ -2,6 +2,8 @@ node_modules/
 frontend/dist/
 build/bin/
 *.exe
-*.dll
-*.so
 *.syso
+platform/windows/libmupdf.dll
+platform/windows/pdf2image.exe
+platform/linux/libmupdf.so
+platform/linux/pdf2image

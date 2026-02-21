@@ -170,7 +170,7 @@ cd mupdf
 make OS=mingw64-cross shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# 輸出：build/shared-release/libmupdf.dll
+# 複製到專案：cp build/shared-release/libmupdf.dll /path/to/go-pdf2image/platform/windows/
 ```
 
 **Linux**（`libmupdf.so`）— 原生編譯：
@@ -181,7 +181,7 @@ cd mupdf
 make shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# 輸出：build/shared-release/libmupdf.so.24.9 → 重新命名為 libmupdf.so
+# 複製到專案：cp build/shared-release/libmupdf.so.24.9 /path/to/go-pdf2image/platform/linux/libmupdf.so
 ```
 
 <h2 id="專案結構">專案結構 <a href="#目錄">⬆</a></h2>
@@ -194,23 +194,28 @@ go-pdf2image/
 ├── worker.go            # 無介面 worker 子進程：渲染與編碼頁面
 ├── taskbar_windows.go   # Windows 工作列進度（ITaskbarList3）與圖示
 ├── taskbar_stub.go      # 非 Windows 平台的空實作
-├── wails.json           # Wails 專案設定
-├── winres.json          # go-winres 設定（圖示與 manifest 嵌入）
 ├── go.mod / go.sum      # Go 依賴
-├── libmupdf.dll         # MuPDF 動態連結庫 — Windows（執行時依賴）
-├── libmupdf.so          # MuPDF 共用程式庫 — Linux（執行時依賴）
-├── build.sh             # 建置腳本（支援 Windows 與 Linux 目標）
+├── wails.json           # Wails 專案設定
+├── build.sh             # Quickstart 建置腳本（互動選單或參數）
 ├── build.bat            # Windows 原生編譯腳本
-├── CHANGELOG.md         # 版本紀錄
-├── LICENSE              # MIT 授權
+├── platform/
+│   ├── windows/
+│   │   ├── libmupdf.dll     # MuPDF 動態連結庫（執行時依賴）
+│   │   ├── winres.json      # go-winres 設定（圖示與 manifest 嵌入）
+│   │   └── pdf2image.exe    # 建置產出
+│   └── linux/
+│       ├── libmupdf.so      # MuPDF 共用程式庫（執行時依賴）
+│       └── pdf2image         # 建置產出
 ├── build/
 │   ├── appicon.png      # 應用程式圖示
-│   └── windows/         # Windows manifest 與圖示
+│   └── windows/         # Windows manifest 與圖示資源
 ├── docs/                # 翻譯版 README
+├── CHANGELOG.md
+├── LICENSE
 └── frontend/
-    ├── index.html       # 主要 HTML
-    ├── package.json     # 前端依賴
-    ├── vite.config.ts   # Vite 設定
+    ├── index.html
+    ├── package.json
+    ├── vite.config.ts
     └── src/
         ├── main.ts          # Vue 應用初始化
         ├── App.vue          # 根元件佈局、自訂標題列 + 語言切換
@@ -220,7 +225,7 @@ go-pdf2image/
         │   └── appStore.ts  # Pinia 狀態管理
         └── components/
             ├── PdfImport.vue       # PDF 檔案選擇器
-            ├── SettingsPanel.vue   # 輸出設定（格式、DPI、品質、並行數、頁面）
+            ├── SettingsPanel.vue   # 輸出設定
             ├── ActionBar.vue       # 轉換按鈕與狀態訊息
             ├── PreviewPanel.vue    # 頁面預覽（縮放/平移）
             └── ConvertProgress.vue # 轉換進度條

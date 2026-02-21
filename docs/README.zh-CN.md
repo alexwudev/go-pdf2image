@@ -170,7 +170,7 @@ cd mupdf
 make OS=mingw64-cross shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# 输出：build/shared-release/libmupdf.dll
+# 复制到项目：cp build/shared-release/libmupdf.dll /path/to/go-pdf2image/platform/windows/
 ```
 
 **Linux**（`libmupdf.so`）— 原生编译：
@@ -181,7 +181,7 @@ cd mupdf
 make shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# 输出：build/shared-release/libmupdf.so.24.9 → 重命名为 libmupdf.so
+# 复制到项目：cp build/shared-release/libmupdf.so.24.9 /path/to/go-pdf2image/platform/linux/libmupdf.so
 ```
 
 <h2 id="项目结构">项目结构 <a href="#目录">⬆</a></h2>
@@ -194,33 +194,38 @@ go-pdf2image/
 ├── worker.go            # 无界面 worker 子进程：渲染与编码页面
 ├── taskbar_windows.go   # Windows 任务栏进度（ITaskbarList3）与图标
 ├── taskbar_stub.go      # 非 Windows 平台的空实现
-├── wails.json           # Wails 项目配置
-├── winres.json          # go-winres 配置（图标与 manifest 嵌入）
 ├── go.mod / go.sum      # Go 依赖
-├── libmupdf.dll         # MuPDF 动态链接库 — Windows（运行时依赖）
-├── libmupdf.so          # MuPDF 共享库 — Linux（运行时依赖）
-├── build.sh             # 构建脚本（支持 Windows 与 Linux 目标）
+├── wails.json           # Wails 项目配置
+├── build.sh             # Quickstart 构建脚本（交互菜单或参数）
 ├── build.bat            # Windows 原生编译脚本
-├── CHANGELOG.md         # 版本记录
-├── LICENSE              # MIT 许可证
+├── platform/
+│   ├── windows/
+│   │   ├── libmupdf.dll     # MuPDF 动态链接库（运行时依赖）
+│   │   ├── winres.json      # go-winres 配置（图标与 manifest 嵌入）
+│   │   └── pdf2image.exe    # 构建产出
+│   └── linux/
+│       ├── libmupdf.so      # MuPDF 共享库（运行时依赖）
+│       └── pdf2image         # 构建产出
 ├── build/
 │   ├── appicon.png      # 应用图标
-│   └── windows/         # Windows manifest 与图标
+│   └── windows/         # Windows manifest 与图标资源
 ├── docs/                # 翻译版 README
+├── CHANGELOG.md
+├── LICENSE
 └── frontend/
-    ├── index.html       # 主 HTML
-    ├── package.json     # 前端依赖
-    ├── vite.config.ts   # Vite 配置
+    ├── index.html
+    ├── package.json
+    ├── vite.config.ts
     └── src/
         ├── main.ts          # Vue 应用初始化
-        ├── App.vue          # 根组件布局、自定义标题栏 + 语言切换
+        ├── App.vue          # 根组件布局、自定义标題栏 + 语言切换
         ├── style.css        # 全局样式
         ├── i18n/            # 国际化（en、zh-TW）
         ├── stores/
         │   └── appStore.ts  # Pinia 状态管理
         └── components/
             ├── PdfImport.vue       # PDF 文件选择器
-            ├── SettingsPanel.vue   # 输出设置（格式、DPI、质量、并行数、页面）
+            ├── SettingsPanel.vue   # 输出设置
             ├── ActionBar.vue       # 转换按钮与状态消息
             ├── PreviewPanel.vue    # 页面预览（缩放/平移）
             └── ConvertProgress.vue # 转换进度条

@@ -170,7 +170,7 @@ cd mupdf
 make OS=mingw64-cross shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# Output: build/shared-release/libmupdf.dll
+# Copy to project: cp build/shared-release/libmupdf.dll /path/to/go-pdf2image/platform/windows/
 ```
 
 **Linux** (`libmupdf.so`) — native build:
@@ -181,7 +181,7 @@ cd mupdf
 make shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
-# Output: build/shared-release/libmupdf.so.24.9 → rename to libmupdf.so
+# Copy to project: cp build/shared-release/libmupdf.so.24.9 /path/to/go-pdf2image/platform/linux/libmupdf.so
 ```
 
 <h2 id="project-structure">Project Structure <a href="#table-of-contents">⬆</a></h2>
@@ -194,23 +194,28 @@ go-pdf2image/
 ├── worker.go            # Headless worker subprocess: render & encode pages
 ├── taskbar_windows.go   # Windows taskbar progress (ITaskbarList3) & icon
 ├── taskbar_stub.go      # No-op stub for non-Windows builds
-├── wails.json           # Wails project config
-├── winres.json          # go-winres config (icon & manifest embedding)
 ├── go.mod / go.sum      # Go dependencies
-├── libmupdf.dll         # MuPDF shared library — Windows (runtime dependency)
-├── libmupdf.so          # MuPDF shared library — Linux (runtime dependency)
-├── build.sh             # Build script (supports Windows and Linux targets)
+├── wails.json           # Wails project config
+├── build.sh             # Quickstart build script (interactive menu or argument)
 ├── build.bat            # Windows native build script
-├── CHANGELOG.md         # Version history
-├── LICENSE              # MIT License
+├── platform/
+│   ├── windows/
+│   │   ├── libmupdf.dll     # MuPDF shared library (runtime)
+│   │   ├── winres.json      # go-winres config (icon & manifest)
+│   │   └── pdf2image.exe    # Build output
+│   └── linux/
+│       ├── libmupdf.so      # MuPDF shared library (runtime)
+│       └── pdf2image         # Build output
 ├── build/
 │   ├── appicon.png      # App icon
-│   └── windows/         # Windows manifest & icon
+│   └── windows/         # Windows manifest & icon resources
 ├── docs/                # Translated READMEs
+├── CHANGELOG.md
+├── LICENSE
 └── frontend/
-    ├── index.html       # Main HTML
-    ├── package.json     # Frontend dependencies
-    ├── vite.config.ts   # Vite config
+    ├── index.html
+    ├── package.json
+    ├── vite.config.ts
     └── src/
         ├── main.ts          # Vue app init
         ├── App.vue          # Root layout, custom title bar + language switcher
@@ -220,7 +225,7 @@ go-pdf2image/
         │   └── appStore.ts  # Pinia state management
         └── components/
             ├── PdfImport.vue       # PDF file picker
-            ├── SettingsPanel.vue   # Output settings (format, DPI, quality, concurrency, pages)
+            ├── SettingsPanel.vue   # Output settings
             ├── ActionBar.vue       # Convert button & status messages
             ├── PreviewPanel.vue    # Page preview with zoom/pan
             └── ConvertProgress.vue # Conversion progress bar

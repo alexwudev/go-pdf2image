@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.0
+
+### Improvements
+
+- **Project restructure**: platform-specific files (libraries, binaries) organized into `platform/windows/` and `platform/linux/`
+- **Interactive build script**: `./build.sh` now shows a menu to choose the target platform; also accepts `./build.sh windows` or `./build.sh linux`
+
 ## v1.3.0
 
 ### New Features
