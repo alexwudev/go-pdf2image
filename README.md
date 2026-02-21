@@ -8,7 +8,7 @@
   English | <a href="docs/README.zh-TW.md">繁體中文</a> | <a href="docs/README.zh-CN.md">简体中文</a> | <a href="docs/README.ja.md">日本語</a>
 </p>
 
-A Windows desktop application for converting PDF pages to high-quality images, built with [Wails](https://wails.io/) (Go backend + Vue 3 frontend). It uses [MuPDF](https://mupdf.com/) for fast, accurate PDF rendering.
+A desktop application for converting PDF pages to high-quality images, built with [Wails](https://wails.io/) (Go backend + Vue 3 frontend). It uses [MuPDF](https://mupdf.com/) for fast, accurate PDF rendering. Supports **Windows** and **Linux** (GUI and CLI modes).
 
 <h2 id="table-of-contents">Table of Contents</h2>
 
@@ -103,9 +103,24 @@ Done! 10 files in 5.2s → ./images
 
 <h2 id="prerequisites">Prerequisites <a href="#table-of-contents">⬆</a></h2>
 
+**Windows:**
+
 - **Windows 10/11** (x64)
 - **[Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)** (pre-installed on most Windows 10/11 systems)
 - **`libmupdf.dll`** must be in the same directory as the executable (included in releases)
+
+**Linux** (x64):
+
+- **GTK 3** and **WebKit2GTK 4.0** (for GUI mode)
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install libgtk-3-0 libwebkit2gtk-4.0-37
+  ```
+- **`libmupdf.so`** must be findable by the dynamic linker (included in releases)
+  ```bash
+  # Run with library in the same directory
+  LD_LIBRARY_PATH=. ./pdf2image
+  ```
 
 <h2 id="building-from-source">Building from Source <a href="#table-of-contents">⬆</a></h2>
 
@@ -113,12 +128,19 @@ Done! 10 files in 5.2s → ./images
 
 - [Go](https://go.dev/) 1.24+
 - [Node.js](https://nodejs.org/)
-- [go-winres](https://github.com/tc-hib/go-winres) (for embedding the app icon): `go install github.com/tc-hib/go-winres@latest`
+- [go-winres](https://github.com/tc-hib/go-winres) (Windows builds only, for embedding the app icon): `go install github.com/tc-hib/go-winres@latest`
+- **Linux builds** also require: `sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
 
 <h3 id="wsl-cross-compile-to-windows">WSL (cross-compile to Windows) <a href="#table-of-contents">⬆</a></h3>
 
 ```bash
-./build.sh
+./build.sh            # or: ./build.sh windows
+```
+
+<h3 id="linux-native">Linux (native) <a href="#table-of-contents">⬆</a></h3>
+
+```bash
+./build.sh linux
 ```
 
 <h3 id="windows-native">Windows (native) <a href="#table-of-contents">⬆</a></h3>
@@ -135,9 +157,11 @@ Requires [Wails CLI](https://wails.io/docs/gettingstarted/installation).
 wails dev
 ```
 
-<h3 id="libmupdf-dll">libmupdf.dll <a href="#table-of-contents">⬆</a></h3>
+<h3 id="libmupdf">libmupdf.dll / libmupdf.so <a href="#table-of-contents">⬆</a></h3>
 
-The executable requires `libmupdf.dll` (MuPDF 1.24.9, x64) in the same directory. To cross-compile it from WSL:
+The executable requires the MuPDF shared library (1.24.9, x64) in the same directory or library path.
+
+**Windows** (`libmupdf.dll`) — cross-compile from WSL:
 
 ```bash
 # Requires mingw-w64: sudo apt install gcc-mingw-w64-x86-64
@@ -147,6 +171,17 @@ make OS=mingw64-cross shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
 # Output: build/shared-release/libmupdf.dll
+```
+
+**Linux** (`libmupdf.so`) — native build:
+
+```bash
+git clone --recursive --branch 1.24.9 --depth 1 https://github.com/ArtifexSoftware/mupdf.git
+cd mupdf
+make shared=yes build=release \
+  HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
+  -j$(nproc)
+# Output: build/shared-release/libmupdf.so.24.9 → rename to libmupdf.so
 ```
 
 <h2 id="project-structure">Project Structure <a href="#table-of-contents">⬆</a></h2>
@@ -162,8 +197,9 @@ go-pdf2image/
 ├── wails.json           # Wails project config
 ├── winres.json          # go-winres config (icon & manifest embedding)
 ├── go.mod / go.sum      # Go dependencies
-├── libmupdf.dll         # MuPDF shared library (runtime dependency)
-├── build.sh             # WSL cross-compile script
+├── libmupdf.dll         # MuPDF shared library — Windows (runtime dependency)
+├── libmupdf.so          # MuPDF shared library — Linux (runtime dependency)
+├── build.sh             # Build script (supports Windows and Linux targets)
 ├── build.bat            # Windows native build script
 ├── CHANGELOG.md         # Version history
 ├── LICENSE              # MIT License

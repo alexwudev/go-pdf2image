@@ -55,9 +55,9 @@ watch(() => store.isConverting, (converting) => {
           <template v-else>PDF2Image</template>
         </span>
         <div class="titlebar-btns" style="--wails-draggable: none">
-          <button class="tb-btn" @click="WindowMinimise" title="Minimize">&#xE921;</button>
-          <button class="tb-btn" @click="WindowToggleMaximise" title="Maximize">&#xE922;</button>
-          <button class="tb-btn tb-close" @click="Quit" title="Close">&#xE8BB;</button>
+          <button class="tb-btn" @click="WindowMinimise" title="Minimize"><svg width="10" height="1" viewBox="0 0 10 1"><line x1="0" y1="0.5" x2="10" y2="0.5" stroke="currentColor" stroke-width="1"/></svg></button>
+          <button class="tb-btn" @click="WindowToggleMaximise" title="Maximize"><svg width="10" height="10" viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"/></svg></button>
+          <button class="tb-btn tb-close" @click="Quit" title="Close"><svg width="10" height="10" viewBox="0 0 10 10"><line x1="0" y1="0" x2="10" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="1.2"/></svg></button>
         </div>
       </div>
     </div>
@@ -95,7 +95,7 @@ watch(() => store.isConverting, (converting) => {
 .titlebar-content{position:relative;display:flex;align-items:center;justify-content:space-between;height:100%;padding-left:12px}
 .titlebar-title{font-size:12px;color:#a1a1aa;font-weight:500}
 .titlebar-btns{display:flex;height:100%}
-.tb-btn{width:46px;height:100%;border:none;background:transparent;color:#a1a1aa;font-family:'Segoe MDL2 Assets','Segoe Fluent Icons';font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s}
+.tb-btn{width:46px;height:100%;border:none;background:transparent;color:#a1a1aa;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s}
 .tb-btn:hover{background:rgba(255,255,255,.1);color:#e4e4e7}
 .tb-close:hover{background:#c42b1c;color:#fff}
 

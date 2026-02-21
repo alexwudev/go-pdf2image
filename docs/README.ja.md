@@ -8,7 +8,7 @@
   <a href="../README.md">English</a> | <a href="README.zh-TW.md">繁體中文</a> | <a href="README.zh-CN.md">简体中文</a> | 日本語
 </p>
 
-PDF ページを高品質な画像に変換する Windows デスクトップアプリケーションです。[Wails](https://wails.io/)（Go バックエンド + Vue 3 フロントエンド）で構築され、[MuPDF](https://mupdf.com/) による高速・高精度な PDF レンダリングを実現しています。
+PDF ページを高品質な画像に変換するデスクトップアプリケーションです。[Wails](https://wails.io/)（Go バックエンド + Vue 3 フロントエンド）で構築され、[MuPDF](https://mupdf.com/) による高速・高精度な PDF レンダリングを実現しています。**Windows** と **Linux** に対応（GUI および CLI モード）。
 
 <h2 id="目次">目次</h2>
 
@@ -103,9 +103,24 @@ Done! 10 files in 5.2s → ./images
 
 <h2 id="前提条件">前提条件 <a href="#目次">⬆</a></h2>
 
+**Windows：**
+
 - **Windows 10/11**（x64）
 - **[Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)**（ほとんどの Windows 10/11 にプリインストール済み）
 - **`libmupdf.dll`** が実行ファイルと同じディレクトリに必要（リリースに同梱）
+
+**Linux**（x64）：
+
+- **GTK 3** と **WebKit2GTK 4.0**（GUI モードに必要）
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install libgtk-3-0 libwebkit2gtk-4.0-37
+  ```
+- **`libmupdf.so`** がダイナミックリンカーの検索パスに必要（リリースに同梱）
+  ```bash
+  # 同じディレクトリのライブラリで実行
+  LD_LIBRARY_PATH=. ./pdf2image
+  ```
 
 <h2 id="ソースからビルド">ソースからビルド <a href="#目次">⬆</a></h2>
 
@@ -113,12 +128,19 @@ Done! 10 files in 5.2s → ./images
 
 - [Go](https://go.dev/) 1.24+
 - [Node.js](https://nodejs.org/)
-- [go-winres](https://github.com/tc-hib/go-winres)（アプリアイコン埋め込み用）：`go install github.com/tc-hib/go-winres@latest`
+- [go-winres](https://github.com/tc-hib/go-winres)（Windows ビルドのみ、アプリアイコン埋め込み用）：`go install github.com/tc-hib/go-winres@latest`
+- **Linux ビルド**にはさらに：`sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
 
 <h3 id="wslからwindowsへクロスコンパイル">WSL（Windows へクロスコンパイル） <a href="#目次">⬆</a></h3>
 
 ```bash
-./build.sh
+./build.sh            # または：./build.sh windows
+```
+
+<h3 id="linuxネイティブ">Linux（ネイティブ） <a href="#目次">⬆</a></h3>
+
+```bash
+./build.sh linux
 ```
 
 <h3 id="windowsネイティブ">Windows（ネイティブ） <a href="#目次">⬆</a></h3>
@@ -135,9 +157,11 @@ build.bat
 wails dev
 ```
 
-<h3 id="libmupdf-dll">libmupdf.dll <a href="#目次">⬆</a></h3>
+<h3 id="libmupdf">libmupdf.dll / libmupdf.so <a href="#目次">⬆</a></h3>
 
-実行ファイルには `libmupdf.dll`（MuPDF 1.24.9, x64）が同じディレクトリに必要です。WSL からクロスコンパイルする方法：
+実行ファイルには MuPDF 共有ライブラリ（1.24.9, x64）が同じディレクトリまたはライブラリパスに必要です。
+
+**Windows**（`libmupdf.dll`）— WSL からクロスコンパイル：
 
 ```bash
 # mingw-w64 が必要：sudo apt install gcc-mingw-w64-x86-64
@@ -147,6 +171,17 @@ make OS=mingw64-cross shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
 # 出力：build/shared-release/libmupdf.dll
+```
+
+**Linux**（`libmupdf.so`）— ネイティブビルド：
+
+```bash
+git clone --recursive --branch 1.24.9 --depth 1 https://github.com/ArtifexSoftware/mupdf.git
+cd mupdf
+make shared=yes build=release \
+  HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
+  -j$(nproc)
+# 出力：build/shared-release/libmupdf.so.24.9 → libmupdf.so にリネーム
 ```
 
 <h2 id="プロジェクト構成">プロジェクト構成 <a href="#目次">⬆</a></h2>
@@ -162,8 +197,9 @@ go-pdf2image/
 ├── wails.json           # Wails プロジェクト設定
 ├── winres.json          # go-winres 設定（アイコン＆マニフェスト埋め込み）
 ├── go.mod / go.sum      # Go 依存関係
-├── libmupdf.dll         # MuPDF 共有ライブラリ（ランタイム依存）
-├── build.sh             # WSL クロスコンパイルスクリプト
+├── libmupdf.dll         # MuPDF 共有ライブラリ — Windows（ランタイム依存）
+├── libmupdf.so          # MuPDF 共有ライブラリ — Linux（ランタイム依存）
+├── build.sh             # ビルドスクリプト（Windows・Linux 対応）
 ├── build.bat            # Windows ネイティブビルドスクリプト
 ├── CHANGELOG.md         # バージョン履歴
 ├── LICENSE              # MIT ライセンス

@@ -8,7 +8,7 @@
   <a href="../README.md">English</a> | 繁體中文 | <a href="README.zh-CN.md">简体中文</a> | <a href="README.ja.md">日本語</a>
 </p>
 
-一款 Windows 桌面應用程式，用於將 PDF 頁面轉換為高品質圖片。使用 [Wails](https://wails.io/)（Go 後端 + Vue 3 前端）開發，透過 [MuPDF](https://mupdf.com/) 進行快速、精確的 PDF 渲染。
+一款桌面應用程式，用於將 PDF 頁面轉換為高品質圖片。使用 [Wails](https://wails.io/)（Go 後端 + Vue 3 前端）開發，透過 [MuPDF](https://mupdf.com/) 進行快速、精確的 PDF 渲染。支援 **Windows** 及 **Linux**（GUI 與 CLI 模式）。
 
 <h2 id="目錄">目錄</h2>
 
@@ -103,9 +103,24 @@ Done! 10 files in 5.2s → ./images
 
 <h2 id="前置需求">前置需求 <a href="#目錄">⬆</a></h2>
 
+**Windows：**
+
 - **Windows 10/11**（x64）
 - **[Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)**（大多數 Windows 10/11 系統已預裝）
 - **`libmupdf.dll`** 必須與執行檔放在同一目錄（發行版本中已包含）
+
+**Linux**（x64）：
+
+- **GTK 3** 和 **WebKit2GTK 4.0**（GUI 模式所需）
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install libgtk-3-0 libwebkit2gtk-4.0-37
+  ```
+- **`libmupdf.so`** 必須在動態連結器可搜尋的路徑中（發行版本已包含）
+  ```bash
+  # 以同目錄的程式庫執行
+  LD_LIBRARY_PATH=. ./pdf2image
+  ```
 
 <h2 id="從原始碼建置">從原始碼建置 <a href="#目錄">⬆</a></h2>
 
@@ -113,12 +128,19 @@ Done! 10 files in 5.2s → ./images
 
 - [Go](https://go.dev/) 1.24+
 - [Node.js](https://nodejs.org/)
-- [go-winres](https://github.com/tc-hib/go-winres)（嵌入應用程式圖示用）：`go install github.com/tc-hib/go-winres@latest`
+- [go-winres](https://github.com/tc-hib/go-winres)（僅 Windows 建置，嵌入應用程式圖示用）：`go install github.com/tc-hib/go-winres@latest`
+- **Linux 建置**另需：`sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
 
 <h3 id="wsl交叉編譯為-windows">WSL（交叉編譯為 Windows） <a href="#目錄">⬆</a></h3>
 
 ```bash
-./build.sh
+./build.sh            # 或：./build.sh windows
+```
+
+<h3 id="linux原生編譯">Linux（原生編譯） <a href="#目錄">⬆</a></h3>
+
+```bash
+./build.sh linux
 ```
 
 <h3 id="windows原生編譯">Windows（原生編譯） <a href="#目錄">⬆</a></h3>
@@ -135,9 +157,11 @@ build.bat
 wails dev
 ```
 
-<h3 id="libmupdf-dll">libmupdf.dll <a href="#目錄">⬆</a></h3>
+<h3 id="libmupdf">libmupdf.dll / libmupdf.so <a href="#目錄">⬆</a></h3>
 
-執行檔需要 `libmupdf.dll`（MuPDF 1.24.9, x64）放在同一目錄。從 WSL 交叉編譯：
+執行檔需要 MuPDF 共用程式庫（1.24.9, x64）放在同一目錄或程式庫路徑中。
+
+**Windows**（`libmupdf.dll`）— 從 WSL 交叉編譯：
 
 ```bash
 # 需要 mingw-w64：sudo apt install gcc-mingw-w64-x86-64
@@ -147,6 +171,17 @@ make OS=mingw64-cross shared=yes build=release \
   HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
   -j$(nproc)
 # 輸出：build/shared-release/libmupdf.dll
+```
+
+**Linux**（`libmupdf.so`）— 原生編譯：
+
+```bash
+git clone --recursive --branch 1.24.9 --depth 1 https://github.com/ArtifexSoftware/mupdf.git
+cd mupdf
+make shared=yes build=release \
+  HAVE_X11=no HAVE_GLUT=no HAVE_CURL=no USE_SYSTEM_LIBS=no \
+  -j$(nproc)
+# 輸出：build/shared-release/libmupdf.so.24.9 → 重新命名為 libmupdf.so
 ```
 
 <h2 id="專案結構">專案結構 <a href="#目錄">⬆</a></h2>
@@ -162,8 +197,9 @@ go-pdf2image/
 ├── wails.json           # Wails 專案設定
 ├── winres.json          # go-winres 設定（圖示與 manifest 嵌入）
 ├── go.mod / go.sum      # Go 依賴
-├── libmupdf.dll         # MuPDF 動態連結庫（執行時依賴）
-├── build.sh             # WSL 交叉編譯腳本
+├── libmupdf.dll         # MuPDF 動態連結庫 — Windows（執行時依賴）
+├── libmupdf.so          # MuPDF 共用程式庫 — Linux（執行時依賴）
+├── build.sh             # 建置腳本（支援 Windows 與 Linux 目標）
 ├── build.bat            # Windows 原生編譯腳本
 ├── CHANGELOG.md         # 版本紀錄
 ├── LICENSE              # MIT 授權

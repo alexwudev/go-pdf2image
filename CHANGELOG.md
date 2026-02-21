@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.0
+
+### New Features
+
+- **Linux support**: both GUI and CLI modes now work on Linux
+  - GUI requires GTK 3 and WebKit2GTK 4.0
+  - CLI requires only `libmupdf.so` in the library path
+  - `build.sh` supports `./build.sh linux` for native Linux builds
+- **Cross-platform window controls**: title bar buttons now use SVG icons instead of Windows-only Segoe MDL2 Assets font
+
 ## v1.2.0
 
 ### New Features
