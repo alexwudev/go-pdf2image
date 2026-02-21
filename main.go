@@ -23,11 +23,12 @@ func main() {
 	app := NewApp()
 
 	err := wails.Run(&options.App{
-		Title:     "PDF2Image",
-		Width:     1280,
-		Height:    800,
-		MinWidth:  960,
-		MinHeight: 600,
+		Title:            "PDF2Image",
+		Width:            1280,
+		Height:           800,
+		MinWidth:         960,
+		MinHeight:        600,
+		Frameless:        true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
